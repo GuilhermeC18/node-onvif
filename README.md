@@ -32,14 +32,13 @@ $ npm install node-onvif
 ## Table of Contents
 * [Quick Start](#Quick-Start)
   * [Discover ONVIF network cameras](#Quick-Start-1)
-  * [Create a OnvifDevice object](#Quick-Start-2)
+  * [Create an OnvifDevice object](#Quick-Start-2)
   * [Get the stream URL](#Quick-Start-3)
   * [Get the snapshot](#Quick-Start-4)
   * [Control the PTZ](#Quick-Start-5)
 * [`Onvif` object](#Onvif-object)
   * [Create an `Onvif` object](#Create-an-Onvif-object)
   * [Methods](#Onvif-methods)
-    * [`init(callback)` method](#init-method)
     * [`startDiscovery(callback)` method](#startDiscovery-method)
     * [`stopDiscovery([callback])` method](#stopDiscovery-method)
 * [`OnvifDevice` object](#OnvifDevice-object)
@@ -348,9 +347,9 @@ device.init((error) => {
 If this code has been successfully finished, you could find that the camera turns to the right for a second at the highest speed.
 
 ---------------------------------------
-## <a name="Onfiv-object"> Onvif object</a>
+## <a name="Onvif-object">Onvif object</a>
 
-### <a name="Create-an-Onvif-object"> Create an `Onvif` object</a>
+### <a name="Create-an-Onvif-object">Create an `Onvif` object</a>
 
 In order to use the node-onvif module, you have to load the node-onvif module as follows:
 
@@ -360,11 +359,11 @@ var onvif = require('node-onvif');
 
 The variable `onvif` in the code above is the `Onvif` object.
 
-### <a name="Onvif-methods"> Methods</a>
+### <a name="Onvif-methods">Methods</a>
 
 This section describes the methods implemented in the `Onvif` object.
 
-#### <a name="startDiscovery-method"> startDiscovery(*callback*)</a>
+#### <a name="startDiscovery-method">startDiscovery(*callback*)</a>
 
 This method starts the discovery process and tries to find the ONVIF network camera devices. Whenever an ONVIF network camera device is found, the `callback` function specified to the 1st argument will be called.
 
@@ -828,7 +827,7 @@ Note that the all sections below are for those who are familiar with the ONVIF s
 
 The ONVIF specifications define a lot of SOAP-based commands. This module implements part of the commands. Actually, most of the methods described in the previous sections are implemented using the methods representing the commands described the sections below.
 
-The methods for the ONVIF commands are exposed in the [`OnvifServiceDevice`](#OnvifServiceDevice-object) object, the [`OnvifServiceMedia`](#OnvifServiceMedia-object) object, and [`OnvifServicePtz`](#OnvifServicePtz-object) object, which are available from the [`OnvifDevice`](#OnvifDevice-object)`.device` property, the [`OnvifDevice`](#OnvifDevice-object)`.media` property, and the [`OnvifDevice`](#OnvifDevice-object)`.ptz` property, respectively.
+The methods for the ONVIF commands are exposed in the [`OnvifServiceDevice`](#OnvifServiceDevice-object) object, the [`OnvifServiceMedia`](#OnvifServiceMedia-object) object, and [`OnvifServicePtz`](#OnvifServicePtz-object) object, which are available from the [`OnvifDevice.device`](#OnvifDevice-properties) property, the [`OnvifDevice.media`](#OnvifDevice-properties) property, and the [`OnvifDevice.ptz`](#OnvifDevice-properties) property, respectively.
 
 For example, if you want to call the `GotoHomePosition` command, you can use the `gotoHomePosition` method implemented in the [`OnvifServicePtz`](#OnvifServicePtz-object) object like this:
 
