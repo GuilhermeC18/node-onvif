@@ -28,6 +28,13 @@ $ npm install xml2js
 $ npm install html
 $ npm install node-onvif
 ```
+
+## Sample Application
+
+This package includes a sample application "[ONVIF Network Camera Manager](https://github.com/futomi/node-onvif/tree/master/sample)". You can try this module with your PTZ ONVIF network camera easily.
+
+![ONVIF Network Camera Manager](sample/imgs/manager_controller.jpg)
+
 ---------------------------------------
 ## Table of Contents
 * [Quick Start](#Quick-Start)
