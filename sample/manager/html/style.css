@@ -1,0 +1,132 @@
+tml,body {
+	font-family: "游ゴシック", YuGothic, "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", sans-serif;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+h1 {
+	margin: 0;
+}
+#main-wrapper {
+	margin-top: 5em;
+}
+/*
+#device {
+	width: 20em;
+}
+#user {
+	width: 8em;
+}
+#pass {
+	width: 8em;
+}
+*/
+#connected-device {
+	position: relative;
+	background-color: #000000;
+	overflow: hidden;
+	display: none;
+}
+#connected-device img.snapshot {
+	position: absolute;
+}
+#connected-device div.ptz-spd-ctl-box {
+	position: absolute;
+	bottom: 10px;
+	left: 1em;
+	background-color: rgba(255, 255, 255, 0.5);
+	border-radius: 0.3em;
+}
+#connected-device div.ptz-spd-ctl-box span.label {
+	display: block;
+	margin-top: 0.3em;
+}
+#connected-device div.device-info-box {
+	position: absolute;
+	top: 1em;
+	right: 1em;
+	background-color: rgba(255, 255, 255, 0.5);
+	padding: 0.3em 0.5em;
+	border-radius: 0.3em;
+}
+#connected-device div.disconnect-box {
+	position: absolute;
+	bottom: 10px;
+	right: 1em;
+}
+#connected-device div.ptz-ctl-box {
+	position: absolute;
+	width: 160px;
+	height: 160px;
+	bottom: 80px;
+	left: 1em;
+}
+#connected-device div.ptz-ctl-box div.ptz-pad-box {
+	width: 160px;
+	height: 160px;
+	border-radius: 80px;
+	background-color: #ffffff;
+	color: #000000;
+	position: absolute;
+	opacity: 0.4;
+}
+#connected-device div.ptz-ctl-box div.ptz-pad-box:hover {
+	opacity: 0.6;
+}
+#connected-device div.ptz-ctl-box div.ptz-pad-box button.ptz-goto-home {
+	width: 50px;
+	height: 50px;
+	border-width: 0px;
+	border-radius: 25px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+#connected-device div.ptz-ctl-box div.ptz-pad-box .left {
+	position: absolute;
+	left: 10px;
+	top: 74px;
+}
+#connected-device div.ptz-ctl-box div.ptz-pad-box .right {
+	position: absolute;
+	right: 10px;
+	top: 74px;
+}
+#connected-device div.ptz-ctl-box div.ptz-pad-box .up {
+	position: absolute;
+	left: 74px;
+	top: 10px;
+}
+#connected-device div.ptz-ctl-box div.ptz-pad-box .down {
+	position: absolute;
+	left: 74px;
+	top: 140px;
+}
+
+#connected-device div.disconnect-box button[name="disconnect"] {
+	opacity: 0.5 !important;
+}
+#connected-device div.disconnect-box button[name="disconnect"]:hover {
+	opacity: 1.0 !important;
+}
+
+@media (max-width: 768px) {
+	#connected-device div.ptz-spd-ctl-box {
+		display: none;
+	}
+	#connected-device div.ptz-ctl-box {
+		bottom: 10px;
+	}
+}
+
+#connected-device div.ptz-zom-ctl-box {
+	position: absolute;
+	bottom: 120px;
+	right: 1em;
+	opacity: 0.4;
+}
+#connected-device div.ptz-zom-ctl-box:hover {
+	opacity: 0.6;
+}
