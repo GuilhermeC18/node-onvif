@@ -7,6 +7,14 @@ When the `server.js` is run, it starts a web server and a WebSocket server for t
 
 When the `server.js` receives a command from the web application run on the web browser, it communicates with the targeted ONVIF device.
 
+Before you try the ONVIF Network Camera Manager, you have to install some Node modules:
+
+```
+$ cd ~
+$ npm install node-onvif
+$ npm install websocket.io
+```
+
 You can starts the `server.js` as follows:
 
 ```
