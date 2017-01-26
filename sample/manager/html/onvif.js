@@ -86,7 +86,6 @@ OnvifManager.prototype.adjustSize = function() {
 };
 
 OnvifManager.prototype.initWebSocketConnection = function() {
-	console.dir(document.location);
 	this.ws = new WebSocket('ws://' + document.location.host);
 	this.ws.onopen = function() {
 		console.log('WebSocket connection established.');
