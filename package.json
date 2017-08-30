@@ -1,6 +1,6 @@
 {
   "name": "node-onvif",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "The node-onvif is a Node.js module which allows you to communicate with the network camera which supports the ONVIF specifications.",
   "main": "./lib/node-onvif.js",
   "files": [

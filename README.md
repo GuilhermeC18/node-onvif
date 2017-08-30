@@ -18,12 +18,16 @@ The node-onvif provides you with the APIs as follows:
 Besides, the node-onvif provides you with simple APIs that allow you to control ONVIF network cameras easily even if you are not familiar with the ONVIF specifications.
 
 ## Dependencies
-* [Node.js](https://nodejs.org/en/) 4.4 +
-* [xml2js](https://www.npmjs.com/package/xml2js) 0.4.17 +
-* [html](https://www.npmjs.com/package/html) 1.0.0 + (optional)
+
+- [Node.js](https://nodejs.org/en/) 4.4 +
+  - Though the node-enocean-utils works on Node 4 for now, it is strongly recommended to use Node 6 or newer. The node-onvif will not support Node 4 in the future.
+- [xml2js](https://www.npmjs.com/package/xml2js) 0.4.17 +
+- [html](https://www.npmjs.com/package/html) 1.0.0 + (optional)
 
 ## Installation
+
 ```
+$ cd ~
 $ npm install xml2js
 $ npm install html
 $ npm install node-onvif
@@ -43,11 +47,14 @@ This package includes a sample application "[ONVIF Network Camera Manager](https
   * [Get the stream URL](#Quick-Start-3)
   * [Get the snapshot](#Quick-Start-4)
   * [Control the PTZ](#Quick-Start-5)
+* [Asynchronous methods](#Asynchronous-methods)
 * [`Onvif` object](#Onvif-object)
   * [Create an `Onvif` object](#Create-an-Onvif-object)
   * [Methods](#Onvif-methods)
-    * [`startDiscovery(callback)` method](#startDiscovery-method)
-    * [`stopDiscovery([callback])` method](#stopDiscovery-method)
+    * [`startProbe([callback])` method](#startProbe-method)
+    * [`stopProbe([callback])` method](#stopProbe-method)
+    * [`startDiscovery(callback)` method](#startDiscovery-method) *(deprecated)*
+    * [`stopDiscovery([callback])` method](#stopDiscovery-method) *(deprecated)*
 * [`OnvifDevice` object](#OnvifDevice-object)
   * [Create an `OnvifDevice` object](#Create-an-OnvifDevice-object)
   * [Properties](#OnvifDevice-properties)
@@ -56,165 +63,166 @@ This package includes a sample application "[ONVIF Network Camera Manager](https
     * [`getInformation()` method](#OnvifDevice-getInformation-method)
     * [`getCurrentProfile()` method](#OnvifDevice-getCurrentProfile-method)
     * [`getProfileList()` method](#OnvifDevice-getProfileList-method)
-    * [`changeProfile(index)` method](#OnvifDevice-changeProfile-method)
+    * [`changeProfile(index|token)` method](#OnvifDevice-changeProfile-method)
     * [`getUdpStreamUrl()` method](#OnvifDevice-getUdpStreamUrl-method)
     * [`fetchSnapshot(callback)` method](#OnvifDevice-fetchSnapshot-method)
     * [`ptzMove(params[, callback])` method](#OnvifDevice-ptzMove-method)
     * [`ptzStop([callback])` method](#OnvifDevice-ptzStop-method)
 * [ONVIF commands](#ONVIF-commands)
 * [`OnvifServiceDevice` object](#OnvifServiceDevice-object)
-  * [`getCapabilities(callback)` method](#OnvifServiceDevice-getCapabilities-method)
-  * [`getWsdlUrl(callback)` method](#OnvifServiceDevice-getWsdlUrl-method)
-  * [`getDiscoveryMode(callback)` method](#OnvifServiceDevice-getDiscoveryMode-method)
-  * [`getScopes(callback)` method](#OnvifServiceDevice-getScopes-method)
-  * [`setScopes(params, callback)` method](#OnvifServiceDevice-setScopes-method)
-  * [`addScopes(params, callback)` method](#OnvifServiceDevice-addScopes-method)
-  * [`removeScopes(params, callback)` method](#OnvifServiceDevice-removeScopes-method)
-  * [`getHostname(callback)` method](#OnvifServiceDevice-getHostname-method)
-  * [`setHostname(params, callback)` method](#OnvifServiceDevice-setHostname-method)
-  * [`getDNS(callback)` method](#OnvifServiceDevice-getDNS-method)
-  * [`setDNS(params, callback)` method](#OnvifServiceDevice-setDNS-method)
-  * [`getNetworkInterfaces(callback)` method](#OnvifServiceDevice-getNetworkInterfaces-method)
-  * [`getNetworkProtocols(callback)` method](#OnvifServiceDevice-getNetworkProtocols-method)
-  * [`setNetworkProtocols(params, callback)` method](#OnvifServiceDevice-setNetworkProtocols-method)
-  * [`getNetworkDefaultGateway(callback)` method](#OnvifServiceDevice-getNetworkDefaultGateway-method)
-  * [`setNetworkDefaultGateway(params, callback)` method](#OnvifServiceDevice-setNetworkDefaultGateway-method)
-  * [`getDeviceInformation(callback)` method](#OnvifServiceDevice-getDeviceInformation-method)
-  * [`getSystemDateAndTime(callback)` method](#OnvifServiceDevice-getSystemDateAndTime-method)
-  * [`reboot(callback)` method](#OnvifServiceDevice-reboot-method)
-  * [`getUsers(callback)` method](#OnvifServiceDevice-getUsers-method)
-  * [`createUsers(params, callback)` method](#OnvifServiceDevice-createUsers-method)
-  * [`deleteUsers(params, callback)` method](#OnvifServiceDevice-deleteUsers-method)
-  * [`setUser(params, callback)` method](#OnvifServiceDevice-setUser-method)
-  * [`getRelayOutputs(callback)` method](#OnvifServiceDevice-getRelayOutputs-method)
-  * [`getNTP(callback)` method](#OnvifServiceDevice-getNTP-method)
-  * [`setNTP(params, callback)` method](#OnvifServiceDevice-setNTP-method)
-  * [`getDynamicDNS(callback)` method](#OnvifServiceDevice-getDynamicDNS-method)
-  * [`getZeroConfiguration(callback)` method](#OnvifServiceDevice-getZeroConfiguration-method)
-  * [`getServices(params, callback)` method](#OnvifServiceDevice-getServices-method)
-  * [`getServiceCapabilities(callback)` method](#OnvifServiceDevice-getServiceCapabilities-method)
+  * [`getCapabilities([callback])` method](#OnvifServiceDevice-getCapabilities-method)
+  * [`getWsdlUrl([callback])` method](#OnvifServiceDevice-getWsdlUrl-method)
+  * [`getDiscoveryMode([callback])` method](#OnvifServiceDevice-getDiscoveryMode-method)
+  * [`getScopes([callback])` method](#OnvifServiceDevice-getScopes-method)
+  * [`setScopes(params[, callback])` method](#OnvifServiceDevice-setScopes-method)
+  * [`addScopes(params[, callback])` method](#OnvifServiceDevice-addScopes-method)
+  * [`removeScopes(params[, callback])` method](#OnvifServiceDevice-removeScopes-method)
+  * [`getHostname([callback])` method](#OnvifServiceDevice-getHostname-method)
+  * [`setHostname(params[, callback])` method](#OnvifServiceDevice-setHostname-method)
+  * [`getDNS([callback])` method](#OnvifServiceDevice-getDNS-method)
+  * [`setDNS(params[, callback])` method](#OnvifServiceDevice-setDNS-method)
+  * [`getNetworkInterfaces([callback])` method](#OnvifServiceDevice-getNetworkInterfaces-method)
+  * [`getNetworkProtocols([callback])` method](#OnvifServiceDevice-getNetworkProtocols-method)
+  * [`setNetworkProtocols(params[, callback])` method](#OnvifServiceDevice-setNetworkProtocols-method)
+  * [`getNetworkDefaultGateway([callback])` method](#OnvifServiceDevice-getNetworkDefaultGateway-method)
+  * [`setNetworkDefaultGateway(params[, callback])` method](#OnvifServiceDevice-setNetworkDefaultGateway-method)
+  * [`getDeviceInformation([callback])` method](#OnvifServiceDevice-getDeviceInformation-method)
+  * [`getSystemDateAndTime([callback])` method](#OnvifServiceDevice-getSystemDateAndTime-method)
+  * [`reboot([callback])` method](#OnvifServiceDevice-reboot-method)
+  * [`getUsers([callback])` method](#OnvifServiceDevice-getUsers-method)
+  * [`createUsers(params[, callback])` method](#OnvifServiceDevice-createUsers-method)
+  * [`deleteUsers(params[, callback])` method](#OnvifServiceDevice-deleteUsers-method)
+  * [`setUser(params[, callback])` method](#OnvifServiceDevice-setUser-method)
+  * [`getRelayOutputs([callback])` method](#OnvifServiceDevice-getRelayOutputs-method)
+  * [`getNTP([callback])` method](#OnvifServiceDevice-getNTP-method)
+  * [`setNTP(params[, callback])` method](#OnvifServiceDevice-setNTP-method)
+  * [`getDynamicDNS([callback])` method](#OnvifServiceDevice-getDynamicDNS-method)
+  * [`getZeroConfiguration([callback])` method](#OnvifServiceDevice-getZeroConfiguration-method)
+  * [`getServices(params[, callback])` method](#OnvifServiceDevice-getServices-method)
+  * [`getServiceCapabilities([callback])` method](#OnvifServiceDevice-getServiceCapabilities-method)
 * [`OnvifServiceMedia` object](#OnvifServiceMedia-object)
-  * [`getStreamUri(params, callback)` method](#OnvifServiceMedia-getStreamUri-method)
-  * [`getVideoEncoderConfigurations(callback)` method](#OnvifServiceMedia-getVideoEncoderConfigurations-method)
-  * [`getVideoEncoderConfiguration(params, callback)` method](#OnvifServiceMedia-getVideoEncoderConfiguration-method)
-  * [`getCompatibleVideoEncoderConfigurations(params, callback)` method](#OnvifServiceMedia-getCompatibleVideoEncoderConfigurations-method)
-  * [`getVideoEncoderConfigurationOptions(params, callback)` method](#OnvifServiceMedia-getVideoEncoderConfigurationOptions-method)
-  * [`getGuaranteedNumberOfVideoEncoderInstances(params, callback)` method](#OnvifServiceMedia-getGuaranteedNumberOfVideoEncoderInstances-method)
-  * [`getProfiles(callback)` method](#OnvifServiceMedia-getProfiles-method)
-  * [`getProfile(params, callback)` method](#OnvifServiceMedia-getProfile-method)
-  * [`createProfile(params, callback)` method](#OnvifServiceMedia-createProfile-method)
-  * [`deleteProfile(params, callback)` method](#OnvifServiceMedia-deleteProfile-method)
-  * [`getVideoSources(callback)` method](#OnvifServiceMedia-getVideoSources-method)
-  * [`getVideoSourceConfiguration(params, callback)` method](#OnvifServiceMedia-getVideoSourceConfiguration-method)
-  * [`getVideoSourceConfigurations(callback)` method](#OnvifServiceMedia-getVideoSourceConfigurations-method)
-  * [`getCompatibleVideoSourceConfigurations(params, callback)` method](#OnvifServiceMedia-getCompatibleVideoSourceConfigurations-method)
-  * [`getVideoSourceConfigurationOptions(params, callback)` method](#OnvifServiceMedia-getVideoSourceConfigurationOptions-method)
-  * [`getMetadataConfiguration(params, callback)` method](#OnvifServiceMedia-getMetadataConfiguration-method)
-  * [`getMetadataConfigurations(callback)` method](#OnvifServiceMedia-getMetadataConfigurations-method)
-  * [`getCompatibleMetadataConfigurations(params, callback)` method](#OnvifServiceMedia-getCompatibleMetadataConfigurations-method)
-  * [`getMetadataConfigurationOptions(params, callback)` method](#OnvifServiceMedia-getMetadataConfigurationOptions-method)
-  * [`getAudioSources(callback)` method](#OnvifServiceMedia-getAudioSources-method)
-  * [`getAudioSourceConfiguration(params, callback)` method](#OnvifServiceMedia-getAudioSourceConfiguration-method)
-  * [`getAudioSourceConfigurations(callback)` method](#OnvifServiceMedia-getAudioSourceConfigurations-method)
-  * [`getCompatibleAudioSourceConfigurations(params, callback)` method](#OnvifServiceMedia-getCompatibleAudioSourceConfigurations-method)
-  * [`getAudioSourceConfigurationOptions(params, callback)` method](#OnvifServiceMedia-getAudioSourceConfigurationOptions-method)
-  * [`getAudioEncoderConfiguration(params, callback)` method](#OnvifServiceMedia-getAudioEncoderConfiguration-method)
-  * [`getAudioEncoderConfigurations(callback)` method](#OnvifServiceMedia-getAudioEncoderConfigurations-method)
-  * [`getCompatibleAudioEncoderConfigurations(params, callback)` method](#OnvifServiceMedia-getCompatibleAudioEncoderConfigurations-method)
-  * [`getAudioEncoderConfigurationOptions(params, callback)` method](#OnvifServiceMedia-getAudioEncoderConfigurationOptions-method)
-  * [`getSnapshotUri(params, callback)` method](#OnvifServiceMedia-getSnapshotUri-method)
+  * [`getStreamUri(params[, callback])` method](#OnvifServiceMedia-getStreamUri-method)
+  * [`getVideoEncoderConfigurations([callback])` method](#OnvifServiceMedia-getVideoEncoderConfigurations-method)
+  * [`getVideoEncoderConfiguration(params[, callback])` method](#OnvifServiceMedia-getVideoEncoderConfiguration-method)
+  * [`getCompatibleVideoEncoderConfigurations(params[, callback])` method](#OnvifServiceMedia-getCompatibleVideoEncoderConfigurations-method)
+  * [`getVideoEncoderConfigurationOptions(params[, callback])` method](#OnvifServiceMedia-getVideoEncoderConfigurationOptions-method)
+  * [`getGuaranteedNumberOfVideoEncoderInstances(params[, callback])` method](#OnvifServiceMedia-getGuaranteedNumberOfVideoEncoderInstances-method)
+  * [`getProfiles([callback])` method](#OnvifServiceMedia-getProfiles-method)
+  * [`getProfile(params[, callback])` method](#OnvifServiceMedia-getProfile-method)
+  * [`createProfile(params[, callback])` method](#OnvifServiceMedia-createProfile-method)
+  * [`deleteProfile(params[, callback])` method](#OnvifServiceMedia-deleteProfile-method)
+  * [`getVideoSources([callback])` method](#OnvifServiceMedia-getVideoSources-method)
+  * [`getVideoSourceConfiguration(params[, callback])` method](#OnvifServiceMedia-getVideoSourceConfiguration-method)
+  * [`getVideoSourceConfigurations([callback])` method](#OnvifServiceMedia-getVideoSourceConfigurations-method)
+  * [`getCompatibleVideoSourceConfigurations(params[, callback])` method](#OnvifServiceMedia-getCompatibleVideoSourceConfigurations-method)
+  * [`getVideoSourceConfigurationOptions(params[, callback])` method](#OnvifServiceMedia-getVideoSourceConfigurationOptions-method)
+  * [`getMetadataConfiguration(params[, callback])` method](#OnvifServiceMedia-getMetadataConfiguration-method)
+  * [`getMetadataConfigurations([callback])` method](#OnvifServiceMedia-getMetadataConfigurations-method)
+  * [`getCompatibleMetadataConfigurations(params[, callback])` method](#OnvifServiceMedia-getCompatibleMetadataConfigurations-method)
+  * [`getMetadataConfigurationOptions(params[, callback])` method](#OnvifServiceMedia-getMetadataConfigurationOptions-method)
+  * [`getAudioSources([callback])` method](#OnvifServiceMedia-getAudioSources-method)
+  * [`getAudioSourceConfiguration(params[, callback])` method](#OnvifServiceMedia-getAudioSourceConfiguration-method)
+  * [`getAudioSourceConfigurations([callback])` method](#OnvifServiceMedia-getAudioSourceConfigurations-method)
+  * [`getCompatibleAudioSourceConfigurations(params[, callback])` method](#OnvifServiceMedia-getCompatibleAudioSourceConfigurations-method)
+  * [`getAudioSourceConfigurationOptions(params[, callback])` method](#OnvifServiceMedia-getAudioSourceConfigurationOptions-method)
+  * [`getAudioEncoderConfiguration(params[, callback])` method](#OnvifServiceMedia-getAudioEncoderConfiguration-method)
+  * [`getAudioEncoderConfigurations([callback])` method](#OnvifServiceMedia-getAudioEncoderConfigurations-method)
+  * [`getCompatibleAudioEncoderConfigurations(params[, callback])` method](#OnvifServiceMedia-getCompatibleAudioEncoderConfigurations-method)
+  * [`getAudioEncoderConfigurationOptions(params[, callback])` method](#OnvifServiceMedia-getAudioEncoderConfigurationOptions-method)
+  * [`getSnapshotUri(params[, callback])` method](#OnvifServiceMedia-getSnapshotUri-method)
 * [`OnvifServicePtz` object](#OnvifServicePtz-object)
-  * [`getNodes(*callback*)` method](#OnvifServicePtz-getNodes-method)
-  * [`getNode(*params, callback*)` method](#OnvifServicePtz-getNode-method)
-  * [`getConfigurations(*callback*)` method](#OnvifServicePtz-getConfigurations-method)
-  * [`getConfiguration(*params, callback*)` method](#OnvifServicePtz-getConfiguration-method)
-  * [`getConfigurationOptions(*params, callback*)` method](#OnvifServicePtz-getConfigurationOptions-method)
-  * [`getStatus(*params, callback*)` method](#OnvifServicePtz-getStatus-method)
-  * [`continuousMove(*params, callback*)` method](#OnvifServicePtz-continuousMove-method)
-  * [`absoluteMove(*params, callback*)` method](#OnvifServicePtz-absoluteMove-method)
-  * [`relativeMove(*params, callback*)` method](#OnvifServicePtz-relativeMove-method)
-  * [`stop(*params, callback*)` method](#OnvifServicePtz-stop-method)
-  * [`gotoHomePosition(*params, callback*)` method](#OnvifServicePtz-gotoHomePosition-method)
-  * [`setHomePosition(*params, callback*)` method](#OnvifServicePtz-setHomePosition-method)
-  * [`setPreset(*params, callback*)` method](#OnvifServicePtz-setPreset-method)
-  * [`getPresets(*params, callback*)` method](#OnvifServicePtz-getPresets-method)
-  * [`gotoPreset(*params, callback*)` method](#OnvifServicePtz-gotoPreset-method)
-  * [`removePreset(*params, callback*)` method](#OnvifServicePtz-removePreset-method)
+  * [`getNodes([callback])` method](#OnvifServicePtz-getNodes-method)
+  * [`getNode(params[, callback])` method](#OnvifServicePtz-getNode-method)
+  * [`getConfigurations([callback])` method](#OnvifServicePtz-getConfigurations-method)
+  * [`getConfiguration(params[, callback])` method](#OnvifServicePtz-getConfiguration-method)
+  * [`getConfigurationOptions(params[, callback])` method](#OnvifServicePtz-getConfigurationOptions-method)
+  * [`getStatus(params[, callback])` method](#OnvifServicePtz-getStatus-method)
+  * [`continuousMove(params[, callback])` method](#OnvifServicePtz-continuousMove-method)
+  * [`absoluteMove(params[, callback])` method](#OnvifServicePtz-absoluteMove-method)
+  * [`relativeMove(params[, callback])` method](#OnvifServicePtz-relativeMove-method)
+  * [`stop(params[, callback])` method](#OnvifServicePtz-stop-method)
+  * [`gotoHomePosition(params[, callback])` method](#OnvifServicePtz-gotoHomePosition-method)
+  * [`setHomePosition(params[, callback])` method](#OnvifServicePtz-setHomePosition-method)
+  * [`setPreset(params[, callback])` method](#OnvifServicePtz-setPreset-method)
+  * [`getPresets(params[, callback])` method](#OnvifServicePtz-getPresets-method)
+  * [`gotoPreset(params[, callback])` method](#OnvifServicePtz-gotoPreset-method)
+  * [`removePreset(params[, callback])` method](#OnvifServicePtz-removePreset-method)
 * [References](#References)
+* [Release Note](#Release-Note)
 * [License](#License)
 
 ---------------------------------------
-## <a name="Quick-Start"> Quick Start</a>
+## <a id="Quick-Start">Quick Start</a>
 
 This section shows how to discover ONVIF network cameras, how to get the device information, and how to control the PTZ of the device.
 
-### <a name="Quick-Start-1"> Discover ONVIF network cameras</a>
+### <a id="Quick-Start-1">Discover ONVIF network cameras</a>
 
 This sample code shows how to discover ONVIF network cameras.
 
 ```JavaScript
-var onvif = require('node-onvif');
+const onvif = require('node-onvif');
 
 console.log('Start the discovery process.');
-// Find the ONVIF network cameras
-onvif.startDiscovery((info) => {
-  // Show the device name and the URL of the end point
-  console.log('- ' + info.urn);
-  console.log('  - ' + info.name);
-  console.log('  - ' + info.xaddrs[0]);
-});
-
-// Stop the discovery process in 3 seconds
-setTimeout(() => {
-  onvif.stopDiscovery(() => {
-    console.log('Stopped the discovery process.');
-    process.exit();
+// Find the ONVIF network cameras.
+// It will take about 3 seconds.
+onvif.startProbe().then((device_info_list) => {
+  console.log(device_info_list.length + ' devices were found.');
+  // Show the device name and the URL of the end point.
+  device_info_list.forEach((info) => {
+    console.log('- ' + info.urn);
+    console.log('  - ' + info.name);
+    console.log('  - ' + info.xaddrs[0]);
   });
-}, 3000);
+}).catch((error) => {
+  console.error(error);
+});
 ```
 
 The code above will output the result like this:
 
 ```
 Start the discovery process.
+5 devices were found.
+- urn:uuid:cd279d60-afd3-3a22-00dc-daaa234e772c
+  - Canon VB-S30D
+  - http://192.168.10.10:80/onvif/device_service
+- urn:uuid:13814000-8752-1052-bfff-045d4b150782
+  - Sony
+  - http://192.168.10.14/onvif/device_service
 - urn:uuid:4d454930-0000-1000-8000-bcc34217e292
   - Panasonic BB-SC384B
-  - http://192.168.10.17/onvif/device_service
-- urn:uuid:812b12f7-45a0-11b5-8404-c056e3a2e020
-  - Vstarcam
-  - http://192.168.10.14:10080/onvif/device_service
-- urn:uuid:6b2be733-6ad1-4467-8bd0-747bd8efd206
+  - http://192.168.10.12/onvif/device_service
+- urn:uuid:00030050-0000-1000-8000-104fa8e2cc96
+  - Sony
+  - http://192.168.10.25/onvif/device_service
+- urn:uuid:8b10a2e0-3302-48df-9d1a-1197c360e6ca
   - Avantgarde-Test
-  - http://192.168.10.22:36000/onvif/device_service
-Stopped the discovery process.
+  - http://192.168.10.27:36000/onvif/device_service
 ```
 
 The most important information for controlling the device is the URL of the end point of the device. You can get the URL from the code `info.xaddrs[0]` above.
 
-### <a name="Quick-Start-2"> Create an `OnvifDevice` object</a>
+### <a id="Quick-Start-2">Create an `OnvifDevice` object</a>
 
-In order to control the ONVIF network camera, you have to create an `OnfivDevice` object for the device. This sample code shows how to create an `OnvifDevice` object and get the detailed information of the device. 
+In order to control the ONVIF network camera, you have to create an `OnfivDevice` object for the device, then initialize the object using the `init()` method. This sample code shows how to create an `OnvifDevice` object and get the detailed information of the device. 
 
 ```JavaScript
-var onvif = require('node-onvif');
+const onvif = require('node-onvif');
 
 // Create an OnvifDevice object
-var device = new onvif.OnvifDevice({
-  xaddr: 'http://192.168.10.14:10080/onvif/device_service',
+let device = new onvif.OnvifDevice({
+  xaddr: 'http://192.168.10.10:80/onvif/device_service',
   user : 'admin',
   pass : '123456'
 });
 
 // Initialize the OnvifDevice object
-device.init((error) => {
-  if(error) {
-    console.log('[ERROR] ' + error.message);
-  } else {
-    // Get the detailed device information
-    var device_info = device.getInformation();
-    // Show the result
-    console.log(JSON.stringify(device_info, null, '  '));
-  }
+device.init().then((info) => {
+  // Show the detailed information of the device.
+  console.log(JSON.stringify(info, null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
@@ -222,37 +230,35 @@ The code above will output the result like this:
 
 ```
 {
-  "Manufacturer": "Vstarcam",
-  "Model": "Hi3518eV100",
-  "FirmwareVersion": "2.4",
-  "SerialNumber": "3056894",
-  "HardwareId": "1.0"
+  "Manufacturer": "Canon",
+  "Model": "VB-S30D",
+  "FirmwareVersion": "Ver. 1.3.3",
+  "SerialNumber": "999999999999",
+  "HardwareId": "1D"
 }
 ```
 
-### <a name="Quick-Start-3"> Get the stream URL</a>
+### <a id="Quick-Start-3">Get the stream URL</a>
 
 This sample code shows how to get the UDP stream URL.
 
 ```JavaScript
-var onvif = require('node-onvif');
+const onvif = require('node-onvif');
 
 // Create an OnvifDevice object
-var device = new onvif.OnvifDevice({
+let device = new onvif.OnvifDevice({
   xaddr: 'http://192.168.10.14:10080/onvif/device_service',
   user : 'admin',
   pass : '123456'
 });
 
 // Initialize the OnvifDevice object
-device.init((error) => {
-  if(error) {
-    console.log('[ERROR] ' + error.message);
-  } else {
-    // Get the UDP stream URL
-    var url = device.getUdpStreamUrl();
-    console.log(url);
-  }
+device.init().then(() => {
+  // Get the UDP stream URL
+  let url = device.getUdpStreamUrl();
+  console.log(url);
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
@@ -262,43 +268,32 @@ The code above will output the result like this:
 rtsp://192.168.10.14:10554/tcp/av0_0
 ```
 
-### <a name="Quick-Start-4"> Get the snapshot</a>
+### <a id="Quick-Start-4">Get the snapshot</a>
 
 This sample code shows how to get the data of the snapshot and save it to a file.
 
 ```JavaScript
-var onvif = require('node-onvif');
-var fs = require('fs');
+const onvif = require('node-onvif');
+const fs = require('fs');
 
 // Create an OnvifDevice object
-var device = new onvif.OnvifDevice({
+let device = new onvif.OnvifDevice({
   xaddr: 'http://192.168.10.14:10080/onvif/device_service',
   user : 'admin',
   pass : '123456'
 });
 
 // Initialize the OnvifDevice object
-device.init((error) => {
-  if(error) {
-    console.log('[ERROR] ' + error.message);
-    return;
-  }
+device.init().then(() => {
   // Get the data of the snapshot
   console.log('fetching the data of the snapshot...');
-  device.fetchSnapshot((error, res) => {
-    if(error) {
-      console.log(error.message);
-      return;
-    }
-    // Save the data to a file
-    fs.writeFile('snapshot.jpg', res.body, function (error) {
-      if(error) {
-        console.log(error.message);
-      } else {
-        console.log('Done!');
-      }
-    });
-  });
+  return device.fetchSnapshot();
+}).then((res) => {
+  // Save the data to a file
+  fs.writeFileSync('snapshot.jpg', res.body, {encoding: 'binary'});
+  console.log('Done!');
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
@@ -311,66 +306,188 @@ Done!
 
 You will find a JPEG file named `snapshot.jpg` in the current directory.
 
-### <a name="Quick-Start-5"> Control the PTZ</a>
+### <a id="Quick-Start-5">Control the PTZ</a>
 
 This sample code shows how to pan, tilt, and zoom the ONVIF network camera.
 
 ```JavaScript
-var onvif = require('node-onvif');
+const onvif = require('node-onvif');
 
 // Create an OnvifDevice object
-var device = new onvif.OnvifDevice({
+let device = new onvif.OnvifDevice({
   xaddr: 'http://192.168.10.14:10080/onvif/device_service',
   user : 'admin',
   pass : '123456'
 });
 
 // Initialize the OnvifDevice object
-device.init((error) => {
-  if(error) {
-    console.log('[ERROR] ' + error.message);
-    return;
-  }
-  // Create the parameters
-  var params = {
+device.init().then(() => {
+  // Move the camera
+  return device.ptzMove({
     'speed': {
-      x: 1.0, // Speed of pan (in the range of 0 to 1.0)
-      y: 0.0, // Speed of tilt (in the range of 0 to 1.0)
-      z: 0.0  // Speed of zoom (in the range of 0 to 1.0)
+      x: 1.0, // Speed of pan (in the range of -1.0 to 1.0)
+      y: 0.0, // Speed of tilt (in the range of -1.0 to 1.0)
+      z: 0.0  // Speed of zoom (in the range of -1.0 to 1.0)
     },
     'timeout': 1 // seconds
-  };
-  // Move the camera
-  device.ptzMove(params, (error) => {
-    if(error) {
-      console.log(error.message);
-    } else {
-      console.log('Done!');
-    }
   });
+}).then(() => {
+  console.log('Done!');
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
 If this code has been successfully finished, you could find that the camera turns to the right for a second at the highest speed.
 
 ---------------------------------------
-## <a name="Onvif-object">Onvif object</a>
+## <a id="Asynchronous-methods">Asynchronous methods</a>
 
-### <a name="Create-an-Onvif-object">Create an `Onvif` object</a>
+Asynchronous methods implemented in this module return a `Promise` object. In the other hand, such methods support callback coding style as well.
+
+```JavaScript
+device.fetchSnapshot().then((res) => {
+  // Do something
+}).catch((error) => {
+  console.error(error); 
+});
+```
+
+```JavaScript
+device.fetchSnapshot((error, res) => {
+  if(error) {
+    console.error(error);
+  } else {
+    // Do something
+  }
+});
+```
+
+Though the results of the codes above will be completely same, it is strongly recommended to use the `Promise` style. The callback style will be deprecated in the future.
+
+The callback style remains only for backward compatibility becase the versions earlier than v0.1.0 supported only the callback style.
+
+---------------------------------------
+## <a id="Onvif-object">Onvif object</a>
+
+### <a id="Create-an-Onvif-object">Create an `Onvif` object</a>
 
 In order to use the node-onvif module, you have to load the node-onvif module as follows:
 
 ```JavaScript
-var onvif = require('node-onvif');
+const onvif = require('node-onvif');
 ```
 
 The variable `onvif` in the code above is the `Onvif` object.
 
-### <a name="Onvif-methods">Methods</a>
+### <a id="Onvif-methods">Methods</a>
 
 This section describes the methods implemented in the `Onvif` object.
 
-#### <a name="startDiscovery-method">startDiscovery(*callback*)</a>
+#### <a id="startProbe-method">startProbe(*[callback]*)</a>
+
+This method starts the discovery process and tries to find the ONVIF network camera devices. This method returns a `Promise` object if the `callback` is not passed.
+
+The discovery process will take about 3 seconds. Once the process finished, the `resolve()` function will be called with an `Array` object containing hash objects representing the found devices. The hash object contains the properties as follows:
+
+Property   | Type   | Description
+:----------|:-------|:-----------
+`urn`      | String | The URN (Uniform Resource Name) assigned to the device (e.g., "urn:uuid:6b2be733-6ad1-4467-8bd0-747bd8efd206")
+`name`     | String | The product name of the device (e.g., "Panasonic BB-SC384B").
+`hardware` | String | The description of the hardware of the device (e.g., "BB-SC384B").
+`location` | String | The physical location of the device (e.g., "China", "shenzhen", "office").
+`types`    | Array  | The list of types supported by the device (e.g., "dn:NetworkVideoTransmitter", "tds:Device"). Basically, this module is for "dn:NetworkVideoTransmitter".
+`xaddrs`   | Array  | The list of URLs of the end points (e.g., "http://192.168.10.17/onvif/device_service", "http://[2408:12:2e20:d000:bec3:42ff:fe17:e292]/onvif/device_service").
+`scopes`   | Array  | The list of scopes set to the device (e.g., "onvif://www.onvif.org/Profile/Streaming", "onvif://www.onvif.org/location/office").
+
+The sample code below shows the structure of the hash object representing the found device.
+
+```JavaScript
+const onvif = require('node-onvif');
+
+// Find the ONVIF network cameras
+onvif.startProbe().then((device_list) => {
+  // Show the information of the found devices
+  console.log(JSON.stringify(device_list, null, '  '));
+}).catch((error) => {
+  console.error(error);
+});
+```
+
+The code above will output the result like this:
+
+```JavaScript
+[
+  {
+    "urn": "urn:uuid:4d454930-0000-1000-8000-bcc34217e292",
+    "name": "Panasonic BB-SC384B",
+    "hardware": "BB-SC384B",
+    "location": "office",
+    "types": [
+      "dn:NetworkVideoTransmitter",
+      "tds:Device"
+    ],
+    "xaddrs": [
+      "http://192.168.10.12/onvif/device_service",
+      "http://[2408:12:2e20:d000:bec3:42ff:fe17:e292]/onvif/device_service"
+    ],
+    "scopes": [
+      "onvif://www.onvif.org/Profile/Streaming",
+      "onvif://www.onvif.org/hardware/BB-SC384B",
+      "onvif://www.onvif.org/location/office",
+      "onvif://www.onvif.org/name/Panasonic_BB-SC384B",
+      ""
+    ]
+  },
+  {
+    "urn": "urn:uuid:cd279d60-afd3-3a22-00dc-daaa234e772c",
+    "name": "Canon VB-S30D",
+    "hardware": "VB-S30D",
+    "location": "Canon",
+    "types": [
+      "dn:NetworkVideoTransmitter",
+      "tds:Device"
+    ],
+    "xaddrs": [
+      "http://192.168.10.10:80/onvif/device_service",
+      "http://169.254.240.48:80/onvif/device_service",
+      "http://[2408:12:2e20:d000:1a0c:acff:fee9:c231]:80/onvif/device_service",
+      "http://[fe80::1a0c:acff:fee9:c231]:80/onvif/device_service"
+    ],
+    "scopes": [
+      "onvif://www.onvif.org/type/video_encoder",
+      "onvif://www.onvif.org/type/ptz",
+      "onvif://www.onvif.org/name/Canon_VB-S30D",
+      "onvif://www.onvif.org/hardware/VB-S30D",
+      "onvif://www.onvif.org/type/audio_encoder",
+      "onvif://www.onvif.org/type/video_analytics",
+      "onvif://www.onvif.org/type/Network_Video_Transmitter",
+      "onvif://www.onvif.org/Profile/Streaming",
+      "onvif://www.onvif.org/location/Canon"
+    ]
+  }
+]
+```
+
+#### <a id="stopProbe-method">stopProbe(*[callback]*)</a>
+
+This method aborts the discovery process asynchronously. This method returns a `Promise` object if the `callback` is not passed.
+
+```JavaScript
+onvif.stopProbe().then(() => {
+  console.log('Aborted the discovery process.');
+}).catch((error) => {
+  console.error(error);
+});
+```
+
+If the discovery process has been finished when the `stopProbe()` method is called, this method do nothing and the `resolve()` function will be called.
+
+In most cases, you do not have to call this method because the discovery process is automatically finished in 3 seconds after the `startProbe()` method was called.
+
+#### <a id="startDiscovery-method">startDiscovery(*callback*)</a> *(deprecated)*
+
+*This method is deprecated. Do not use this method now. It will be deleted in the future.*
 
 This method starts the discovery process and tries to find the ONVIF network camera devices. Whenever an ONVIF network camera device is found, the `callback` function specified to the 1st argument will be called.
 
@@ -389,7 +506,7 @@ Property   | Type   | Description
 The sample code below shows the structure of the hash object representing the found device.
 
 ```JavaScript
-var onvif = require('node-onvif');
+const onvif = require('node-onvif');
 
 // Find the ONVIF network cameras
 onvif.startDiscovery((info) => {
@@ -424,12 +541,14 @@ The code above will output the result like this:
 }
 ```
 
-#### <a name="stopDiscovery-method"> stopDiscovery(*[callback]*)</a>
+#### <a id="stopDiscovery-method">stopDiscovery(*[callback]*)</a> *(deprecated)*
+
+*This method is deprecated. Do not use this method now. It will be deleted in the future.*
 
 This method stops the discovery process asynchronously. If you want to do something waiting for stopping the discovery process successfully, you can pass a callback function to this method as the 1st argument.
 
 ```JavaScript
-var onvif = require('node-onvif');
+const onvif = require('node-onvif');
 
 // Start the discovery process
 onvif.startDiscovery((info) => {
@@ -453,26 +572,26 @@ onvif.stopDiscovery();
 ```
 
 ---------------------------------------
-## <a name="OnvifDevice-object">OnvifDevice object</a>
+## <a id="OnvifDevice-object">OnvifDevice object</a>
 
 The `OnvifDevice` object represents an ONVIF network camera device. You can control the ONVIF network camera through this object.
 
-### <a name="Create-an-OnvifDevice-object">Create an `OnvifDevice` object</a>
+### <a id="Create-an-OnvifDevice-object">Create an `OnvifDevice` object</a>
 
 In order to control an ONVIF network camera, you have to create an `OnvifDevice` object from the `OnvifDevice` constructor by yourself as follows:
 
 ```JavaScript
-var onvif = require('node-onvif');
+const onvif = require('node-onvif');
 
 // Create an OnvifDevice object
-var device = new onvif.OnvifDevice({
+let device = new onvif.OnvifDevice({
   xaddr: 'http://192.168.10.14:10080/onvif/device_service',
   user : 'admin',
   pass : '123456'
 });
 ```
 
-The variable `device` represents an `OnvifDevice` object in the code above. The `OnvifDevice` constructor requires a hash object consisting of some properties as follows:
+The variable `device` represents an `OnvifDevice` object in the code above. The `OnvifDevice` constructor requires a hash object containing some properties as follows:
 
 Property   | Type   | Required | Description
 :----------|:-------|:---------|:-----------
@@ -482,7 +601,7 @@ Property   | Type   | Required | Description
 
 If you know the value of the `xaddr` property (the URL of the end point of the targeted device) in advance, you don't need to run the discover process(i.e., you don't need to call the `startDiscovery()` method).
 
-### <a name="OnvifDevice-properties">Properties</a>
+### <a id="OnvifDevice-properties">Properties</a>
 
 The `OnvifDevice` object provides some properties as follows:
 
@@ -493,56 +612,57 @@ Property   |          | Type   | Description
            | `media`  | Object | [`OnvifServiceMedia`](#OnvifServiceMedia-object) object
            | `ptz`    | Object | [`OnvifServicePtz`](#OnvifServicePtz-object) object
 
-See the section "[ONVIF commands](#ONVIF-commands)" for details.
+These objects will be set when the initialization process is completed calling the [`init()`](#OnvifDevice-init-method) method. See the section "[ONVIF commands](#ONVIF-commands)" for details.
 
-### <a name="OnvifDevice-methods">Methods</a>
+### <a id="OnvifDevice-methods">Methods</a>
 
-#### <a name="OnvifDevice-init-method">init(*[callback]*)</a>
+#### <a id="OnvifDevice-init-method">init(*[callback]*)</a>
 
-This method Initializes the `OnvifDevice` object. This method must be called before you control the targeted device. Actually, this method retrieves several information essential to control the device from the device.
+This method initializes the `OnvifDevice` object. This method must be called before you control the targeted device. Actually, this method retrieves several information essential to control the device. The process of this method takes a little time to be completed because this method sends several commands to the targeted device and waits for the all relevant responses. Note that you have to wait for the completion of this method to control the device.
+
+This method returns a `Promise` object if the `callback` is not passed. If the initialization process is completed, the `resolve()` function will be called with a hash obect containing the properties as follows:
+
+Property          | Type   | Description
+:-----------------|:-------|:-----------
+`Manufacturer`    | String | The manufactor of the device.
+`Model`           | String | The device model.
+`FirmwareVersion` | String | The firmware version in the device.
+`SerialNumber`    | String | The serial number of the device.
+`HardwareId`      | String | The hardware ID of the device.
+
 
 ```JavaScript
-var onvif = require('node-onvif');
+const onvif = require('node-onvif');
 
 // Create an OnvifDevice object
-var device = new onvif.OnvifDevice({
+let device = new onvif.OnvifDevice({
   xaddr: 'http://192.168.10.14:10080/onvif/device_service',
   user : 'admin',
   pass : '888888'
 });
 
 // Initialize the OnvifDevice object
-device.init((error) => {
-  if(error) {
-    console.log('[ERROR] ' + error.message);
-  } else {
-    console.log('The OnvifDevice object has been initialized successfully.')
-    // Do something.
-  }
+device.init().then((info) => {
+  console.log('The OnvifDevice object has been initialized successfully.');
+  console.log(JSON.stringify(info, null, '  '));
+}).catch((error) => {
+  console.log('[ERROR] ' + error.message);
 });
 ```
 
-This method is executed asynchronously. The process of this method takes a little time to be completed because this method sends several commands to the targeted device and waits for the all relevant responses. Though the callback function is optional, you have to wait for the completion of this method to control the device. Therefore, the code below will doesn't work well:
+The code above will output the result as follow:
 
 ```JavaScript
-// Never do this
-device.init();
-var info = device.getInformation();
-...
+{
+  "Manufacturer": "Canon",
+  "Model": "VB-S30D",
+  "FirmwareVersion": "Ver. 1.3.3",
+  "SerialNumber": "999999999999",
+  "HardwareId": "1D"
+}
 ```
 
-Instead, do this:
-
-```JavaScript
-device.init((error) => {
-  if(!error) {
-    var info = device.getInformation();
-    ...
-  }
-});
-```
-
-#### <a name="OnvifDevice-getInformation-method">getInformation()</a>
+#### <a id="OnvifDevice-getInformation-method">getInformation()</a>
 
 This method returns a hash object consisting of several device information as follow:
 
@@ -554,8 +674,10 @@ Property          | Type   | Description
 `SerialNumber`    | String | The serial number of the device.
 `HardwareId`      | String | The hardware ID of the device.
 
+This object is as same as the object obtained by the [`init()`](#OnvifDevice-init-method) method. Actually, the information has been already retreaved when the initialization process was completed (the [`init()`](#OnvifDevice-init-method) method was called) and stored in the `OnvifDevice` object. The `getInformation()` method just returns the stored information.
+
 ```JavaScript
-var info = device.getInformation();
+let info = device.getInformation();
 console.log(JSON.stringify(info, null, '  '));
 ```
 
@@ -571,7 +693,7 @@ The code above will output the result like this:
 }
 ```
 
-#### <a name="OnvifDevice-getCurrentProfile-method">getCurrentProfile()</a>
+#### <a id="OnvifDevice-getCurrentProfile-method">getCurrentProfile()</a>
 
 The ONVIF network cameras have several profiles by default. The profile is a set of configuration values such as the resolution of the video encoder, the URL of the snapshot, the URL of the video stream, the range of PTZ, and so on.
 
@@ -580,7 +702,7 @@ The `OnvifDevice` object is sure to select one of them and each method implement
 This method returns a hash object containing the information of the profile currently selected by the `OnvifDevice` object.
 
 ```JavaScript
-var profile = device.getCurrentProfile();
+let profile = device.getCurrentProfile();
 console.log(JSON.stringify(profile, null, '  '));
 ```
 
@@ -652,43 +774,43 @@ The code above will output the result like this:
 }
 ```
 
-#### <a name="OnvifDevice-getProfileList-method">getProfileList()</a>
+#### <a id="OnvifDevice-getProfileList-method">getProfileList()</a>
 
 This method returns a list of the profiles set to the device as an Array object. Each element in the Array object is a hash object whose structure is as same as the hash object which can be retrieved by the [`getCurrentProfile()`](#OnvifDevice-getCurrentProfile-method) method.
 
 See the section "[`changeProfile()`](#OnvifDevice-changeProfile-method) method" for details.
 
-#### <a name="OnvifDevice-changeProfile-method">changeProfile(*index*)</a>
+#### <a id="OnvifDevice-changeProfile-method">changeProfile(*index|token*)</a>
 
 This method changes the current profile to the profile corresponding to the `index` specified as the 1st argument, then returns a hash object representing the newly selected profile. The `index` is the position in the profile list which can be obtained through the [`getProfileList()`](#OnvifDevice-getProfileList-method) method, which is in the range of 0 to the length of the list minus 1.
+
+You can pass the profile token instead of the `index`. If a `Number` value is passed, this method assumes the a `index` is passed. If a `String` value is passed, this method assumes that a `token` is passed.
 
 The sample code below shows how to change the current profile to the profile whose video resolution is the smallest:
 
 ```JavaScript
 // Get the current profile
-var profile = device.getCurrentProfile();
+let profile = device.getCurrentProfile();
 // Show the video resolution of the current profile
-var reso = profile['video']['encoder']['resolution'];
+let reso = profile['video']['encoder']['resolution'];
 console.log('- Before: ' + reso['width'] + ' x ' + reso['height']);
 
 // Get a list of the profiles set in the device
-var profile_list = device.getProfileList();
+let profile_list = device.getProfileList();
 
 // Find the profile whose video resolution is the smallest
-var min_square = 4000 * 2000;
-var min_index = 0;
-for(var i=0; i<profile_list.length; i++) {
-  var resolution = profile_list[i]['video']['encoder']['resolution'];
-  var square = resolution['width'] * resolution['height'];
+let min_square = 4000 * 2000;
+let min_index = 0;
+for(let i=0; i<profile_list.length; i++) {
+  let resolution = profile_list[i]['video']['encoder']['resolution'];
+  let square = resolution['width'] * resolution['height'];
   if(square < min_square) {
     min_square = square;
     min_index = i;
   }
 }
-
 // Change the current profile
 profile = device.changeProfile(min_index);
-
 // Show the video resolution
 reso = profile['video']['encoder']['resolution'];
 console.log('- After: ' + reso['width'] + ' x ' + reso['height']);
@@ -701,12 +823,12 @@ This sample code will output the result like this:
 - After: 320 x 180
 ```
 
-#### <a name="OnvifDevice-getUdpStreamUrl-method">getUdpStreamUrl()</a>
+#### <a id="OnvifDevice-getUdpStreamUrl-method">getUdpStreamUrl()</a>
 
 This method returns the UDP Stream URL. Though the URL can be obtained from the result of the [`getCurrentProfile()`](#OnvifDevice-getCurrentProfile-method) method as well, this method makes that easy.
 
 ```JavaScript
-var url = device.getUdpStreamUrl();
+let url = device.getUdpStreamUrl();
 console.log(url);
 ```
 The code above will output the result like this:
@@ -715,13 +837,11 @@ The code above will output the result like this:
 rtsp://192.168.10.14:10554/tcp/av0_0
 ```
 
-#### <a name="OnvifDevice-fetchSnapshot-method">fetchSnapshot(*callback*)</a>
+#### <a id="OnvifDevice-fetchSnapshot-method">fetchSnapshot(*[callback]*)</a>
 
-This method fetches a snapshot captured by the camera at the time. The snapshot is obtained as a [`Buffer`](https://nodejs.org/api/buffer.html) object representing the image data of the snapshot.
+This method fetches a snapshot captured by the camera at the time. The snapshot is obtained as a [`Buffer`](https://nodejs.org/api/buffer.html) object representing the image data of the snapshot. This method returns a `Promise` object if the `callback` is not passed.
 
-As the snapshot is obtained asynchronously, a callback function has to be passed to this method as the 1st argument. 
-
-If an error occurs, an `Error` object is passed to the callback function as the 1st argument. If the snapshot is captured successfully, a hash object is passed to the callback function as the 2nd argument. The hash object consists of some properties as follows:
+If the snapshot is captured successfully, a hash object is passed to the `resolve()` function. The hash object consists of some properties as follows:
 
 Property  | Type   | Description
 :---------|:-------|:-----------
@@ -731,34 +851,27 @@ Property  | Type   | Description
 The code blow shows how to get the snapshot and save it as an image file:
 
 ```JavaScript
-device.fetchSnapshot((error, res) => {
-  if(error) {
-    console.log(error.message);
-    return;
-  }
+device.fetchSnapshot().then((res) => {
   // Determine the file extention
-  var ext = 'bin';
-  var mime_pair = res.headers['content-type'].split('/');
+  let ext = 'bin';
+  let mime_pair = res.headers['content-type'].split('/');
   if(mime_pair[0] === 'image') {
     ext = mime_pair[1];
   }
   // Save the data to a file
-  var fname = 'snapshot.' + ext;
-  fs.writeFile(fname, res.body, function (error) {
-    if(error) {
-      console.log(error.message);
-    } else {
-      console.log('Done!');
-    }
-  });
+  let fname = 'snapshot.' + ext;
+  fs.writeFileSync(fname, res.body, {encoding: 'binary'});
+  console.log('Done!');
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-#### <a name="OnvifDevice-ptzMove-method">ptzMove(*params[, callback]*)</a>
+#### <a id="OnvifDevice-ptzMove-method">ptzMove(*params[, callback]*)</a>
 
-This method pans, tilts, zooms the camera if the ONVIF network camera supports the PTZ service. 2 arguments have to be passed to this method: the 1st argument is a hash object, the 2nd argument is a callback function.
+This method pans, tilts, zooms the camera if the ONVIF network camera supports the PTZ service. This method returns a `Promise` object if the `callback` is not passed.
 
-The structure of the hash object to be passed as the 1st argument is as follows:
+This method takes a hash object as the 1st argument. The structure of the hash object is as follows:
 
 Property  |     | Type    | Required |Description
 :---------|:----|:--------|:---------|:----------
@@ -774,9 +887,10 @@ The `speed.y` represents the speed of vertical movement of the camera. If the va
 
 The `speed.z` represents the speed of the zoom of the camera. If the value of the `speed.z` is positive, the camera will zoom in. If the value is negative, the camera will zoom out. if the value is zero, the camera won't zoom.
 
+The code below will make the camera turn to the left at the highest speed for 1 second.
+
 ```JavaScript
-// Create the parameters
-var params = {
+let params = {
   'speed': {
     x: 1.0, // Speed of pan (in the range of -1.0 to 1.0)
     y: 0.0, // Speed of tilt (in the range of -1.0 to 1.0)
@@ -784,51 +898,42 @@ var params = {
   },
   'timeout': 1 // seconds
 };
-
 // Move the camera
-device.ptzMove(params, (error) => {
-  if(error) {
-    console.log(error.message);
-  } else {
-    console.log('Done!');
-  }
+device.ptzMove(params).then(() => {
+  console.log('Done!');
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-#### <a name="OnvifDevice-ptzStop-method">ptzStop(*[callback]*)</a>
+#### <a id="OnvifDevice-ptzStop-method">ptzStop(*[callback]*)</a>
 
-This method stops the movement of the camera caused by the [`ptzMove()`](#OnvifDevice-ptzMove-method) method.
+This method stops the movement of the camera caused by the [`ptzMove()`](#OnvifDevice-ptzMove-method) method. This method returns a `Promise` object if the `callback` is not passed.
 
 ```JavaScript
 // Create the parameters
-var params = {
+let params = {
   'speed': {x: 0.5, y: 0.0, z: 0.0},
   'timeout': 60 // seconds
 };
-
 // Supposed to move the camera for 60 seconds
-device.ptzMove(params, (error) => {
-  if(error) {
-    console.log(error.message);
-  } else {
-    console.log('Succeeded to move.');
-  }
-});
-
-// Stop to the PTZ in 2 seconds
-setTimeout(() => {
-  device.ptzStop((error) => {
-    if(error) {
-      console.log(error.message);
-    } else {
+device.ptzMove(params).then(() => {
+  console.log('Succeeded to move.');
+  // Stop to the PTZ in 2 seconds
+  setTimeout(() => {
+    device.ptzStop().then(() => {
       console.log('Succeeded to stop.');
-    }
-  })
-}, 2000);
+    }).catch((error) => {
+      console.error(error);
+    });
+  }, 2000);
+}).catch((error) => {
+  console.error(error);
+});
 ```
 
 ---------------------------------------
-## <a name="ONVIF-commands">ONVIF commands</a>
+## <a id="ONVIF-commands">ONVIF commands</a>
 
 Note that the all sections below are for those who are familiar with the ONVIF specifications.
 
@@ -840,38 +945,31 @@ For example, if you want to call the `GotoHomePosition` command, you can use the
 
 ```JavaScript
 // Create a OnvifDevice object
-var device = new onvif.OnvifDevice({
+let device = new onvif.OnvifDevice({
   xaddr: 'http://192.168.10.14:10080/onvif/device_service',
   user : 'admin',
   pass : '123456'
 });
 
 // Initialize the OnvifDevice object
-device.init((error) => {
-  if(error) {
-    console.log('[ERROR] ' + error.message);
-    return;
-  }
+device.init().then(() => {
   // The OnvifServicePtz object
-  var ptz = device.services.ptz;
-  if(ptz) {
-    // The parameters for the gotoHomePosition() method
-    var profile = device.getCurrentProfile();
-    var params = {
-      'ProfileToken': profile['token'],
-      'Speed'       : 1
-    };
-    // Send the GotoHomePosition command using the gotoHomePosition() method
-    ptz.gotoHomePosition(params, (error, result) => {
-      if(error) {
-        console.log('[ERROR] ' + error.message);
-      } else {
-        console.log(JSON.stringify(result.data, null, '  '));
-      }
-    });
-  } else {
-    console.log('[ERROR] Your ONVIF network camera does not support the PTZ service.');
+  let ptz = device.services.ptz;
+  if(!ptz) {
+    throw new Error('Your ONVIF network camera does not support the PTZ service.');
   }
+  // The parameters for the gotoHomePosition() method
+  let profile = device.getCurrentProfile();
+  let params = {
+    'ProfileToken': profile['token'],
+    'Speed'       : 1
+  };
+  // Send the GotoHomePosition command using the gotoHomePosition() method
+  return ptz.gotoHomePosition(params);
+}).then((result) => {
+  console.log(JSON.stringify(result.data, null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
@@ -948,27 +1046,27 @@ All methods representing the ONVIF commands return the same structured object as
 Note that the first character of the method name implemented in this module is lower case though the corresponding letter of the ONVIF command name is upper case. For example, the `ContinuousMove` command specified in the ONVIF specification corresponds to the `continuousMove` method implemented in the [`OnvifServicePtz`](#OnvifServicePtz-object) object.
 
 ---------------------------------------
-## <a name="OnvifServiceDevice-object">`OnvifServiceDevice` object</a>
+## <a id="OnvifServiceDevice-object">`OnvifServiceDevice` object</a>
 
 This object represents the [ONVIF Device Management Service](http://www.onvif.org/onvif/ver10/device/wsdl/devicemgmt.wsdl).
 
-### <a name="OnvifServiceDevice-getCapabilities-method">getCapabilities(*callback*) method</a>
+### <a id="OnvifServiceDevice-getCapabilities-method">getCapabilities(*[callback]*) method</a>
 
 This method sends a `GetCapabilities` command.
 
-### <a name="OnvifServiceDevice-getWsdlUrl-method">getWsdlUrl(*callback*) method</a>
+### <a id="OnvifServiceDevice-getWsdlUrl-method">getWsdlUrl(*[callback]*) method</a>
 
 This method sends a `GetWsdlUrl` command.
 
-### <a name="OnvifServiceDevice-getDiscoveryMode-method">getDiscoveryMode(*callback*) method</a>
+### <a id="OnvifServiceDevice-getDiscoveryMode-method">getDiscoveryMode(*[callback]*) method</a>
 
 This method sends a `GetDiscoveryMode` command.
 
-### <a name="OnvifServiceDevice-getScopes-method">getScopes(*callback*) method</a>
+### <a id="OnvifServiceDevice-getScopes-method">getScopes(*[callback]*) method</a>
 
 This method sends a `GetScopes` command.
 
-### <a name="OnvifServiceDevice-setScopes-method">setScopes(*params, callback*) method</a>
+### <a id="OnvifServiceDevice-setScopes-method">setScopes(*params[, callback]*) method</a>
 
 This method sends a `SetScopes` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -979,25 +1077,27 @@ Property  | Type    | Required |Description
 The code below shows how to set some scopes:
 
 ```JavaScript
-var params = {
+let params = {
   'Scopes': [
     'onvif://www.onvif.org/location/town/Nerima',
     'onvif://www.onvif.org/location/city/Tokyo'
   ]
 };
 
-device.services.device.setScopes(params, (error, result) => {
+device.services.device.setScopes(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
 If you want to delete all configurable scopes, specify an empty `Array` object as the `Scope` property:
 
 ```JavaScript
-var params = {'Scopes': []}
+let params = {'Scopes': []}
 ```
 
-### <a name="OnvifServiceDevice-addScopes-method">addScopes(*params, callback*) method</a>
+### <a id="OnvifServiceDevice-addScopes-method">addScopes(*params[, callback]*) method</a>
 
 This method sends a `AddScopes` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1008,19 +1108,21 @@ Property  | Type    | Required |Description
 The code below shows how to set some scopes:
 
 ```JavaScript
-var params = {
+let params = {
   'Scopes': [
     'onvif://www.onvif.org/location/town/Nerima',
     'onvif://www.onvif.org/location/city/Tokyo'
   ]
 };
 
-device.services.device.addScopes(params, (error, result) => {
+device.services.device.addScopes(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceDevice-removeScopes-method">removeScopes(*params, callback*) method</a>
+### <a id="OnvifServiceDevice-removeScopes-method">removeScopes(*params[, callback]*) method</a>
 
 This method sends a `RemoveScopes` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1031,23 +1133,25 @@ Property  | Type    | Required |Description
 The code below shows how to set some scopes:
 
 ```JavaScript
-var params = {
+let params = {
   'Scopes': [
-    'onvif://www.onvif.org/location/town/Nerima',
-    'onvif://www.onvif.org/location/city/Tokyo'
+    'onvif://www.onvif.org/location/city/Tokyo',
+    'onvif://www.onvif.org/location/town/Nerima'
   ]
 };
 
-device.services.device.removeScopes(params, (error, result) => {
+device.services.device.removeScopes(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceDevice-getHostname-method">getHostname(*callback*) method</a>
+### <a id="OnvifServiceDevice-getHostname-method">getHostname(*[callback]*) method</a>
 
 This method sends a `GetHostname` command.
 
-### <a name="OnvifServiceDevice-setHostname-method">setHostname(*params, callback*) method</a>
+### <a id="OnvifServiceDevice-setHostname-method">setHostname(*params[, callback]*) method</a>
 
 This method sends a `SetHostname` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1058,20 +1162,22 @@ Property  | Type    | Required |Description
 The code below shows how to set some scopes:
 
 ```JavaScript
-var params = {
+let params = {
   'Name': 'cam001'
 };
 
-device.services.device.setHostname(params, (error, result) => {
+device.services.device.setHostname(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceDevice-getDNS-method">getDNS(*callback*) method</a>
+### <a id="OnvifServiceDevice-getDNS-method">getDNS(*[callback]*) method</a>
 
 This method sends a `GetDNS` command.
 
-### <a name="OnvifServiceDevice-setDNS-method">setDNS(*params, callback*) method</a>
+### <a id="OnvifServiceDevice-setDNS-method">setDNS(*params[, callback]*) method</a>
 
 This method sends a `SetDNS` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1085,28 +1191,31 @@ Property       |               | Type    | Required |Description
                | `IPv6Address` | String  | optional | IPv6 address
 
 ```JavaScript
-var params = {
+let params = {
   'FromDHCP'    : false,
-  'SearchDomain': ['example.jp'],
+  'SearchDomain': ['futomi.gr.jp', 'hatano.gr.jp'],
   'DNSManual'   : [
-    {'Type': 'IPv4', 'IPv4Address': '192.168.10.1'}
+    {'Type': 'IPv4', 'IPv4Address': '192.168.10.1'},
+    {'Type': 'IPv4', 'IPv4Address': '192.168.10.3'}
   ]
 };
 
-device.services.device.setDNS(params, (error, result) => {
+return device.services.device.setDNS(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceDevice-getNetworkInterfaces-method">getNetworkInterfaces(*callback*) method</a>
+### <a id="OnvifServiceDevice-getNetworkInterfaces-method">getNetworkInterfaces(*[callback]*) method</a>
 
 This method sends a `GetNetworkProtocols` command.
 
-### <a name="OnvifServiceDevice-getNetworkProtocols-method">getNetworkProtocols(*callback*) method</a>
+### <a id="OnvifServiceDevice-getNetworkProtocols-method">getNetworkProtocols(*[callback]*) method</a>
 
 This method sends a `GetNetworkProtocols` command.
 
-### <a name="OnvifServiceDevice-setNetworkProtocols-method">setNetworkProtocols(*params, callback*) method</a>
+### <a id="OnvifServiceDevice-setNetworkProtocols-method">setNetworkProtocols(*params[, callback]*) method</a>
 
 This method sends a `SetNetworkProtocols` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1118,23 +1227,25 @@ Property           |           | Type    | Required |Description
                    | `Port`    | Integer | optional |
 
 ```JavaScript
-var params = {
+let params = {
   'NetworkProtocols': [
     {'Name': 'HTTP', 'Enabled': true, 'Port': 80},
-    {'Name': 'RTSP', 'Enabled': true, 'Port': 554}
+    {'Name': 'RTSP', 'Enabled': true, 'Port': 554},
   ]
 };
 
-device.services.device.setNetworkProtocols(params, (error, result) => {
+device.services.device.setNetworkProtocols(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceDevice-getNetworkDefaultGateway-method">getNetworkDefaultGateway(*callback*) method</a>
+### <a id="OnvifServiceDevice-getNetworkDefaultGateway-method">getNetworkDefaultGateway(*[callback]*) method</a>
 
 This method sends a `GetNetworkDefaultGateway` command.
 
-### <a name="OnvifServiceDevice-setNetworkDefaultGateway-method">setNetworkDefaultGateway(*params, callback*) method</a>
+### <a id="OnvifServiceDevice-setNetworkDefaultGateway-method">setNetworkDefaultGateway(*params[, callback]*) method</a>
 
 This method sends a `SetNetworkDefaultGateway` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1143,34 +1254,36 @@ Property         | Type    | Required |Description
 `NetworkGateway` | Array   | required | a list of IP addresses of gateways
 
 ```JavaScript
-var params = {
+let params = {
   'NetworkGateway': [
     {'IPv4Address': '192.168.10.1'}
   ]
 };
 
-device.services.device.setNetworkDefaultGateway(params, (error, result) => {
+device.services.device.setNetworkDefaultGateway(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceDevice-getDeviceInformation-method">getDeviceInformation(*callback*) method</a>
+### <a id="OnvifServiceDevice-getDeviceInformation-method">getDeviceInformation(*[callback]*) method</a>
 
 This method sends a `GetDeviceInformation` command.
 
-### <a name="OnvifServiceDevice-getSystemDateAndTime-method">getSystemDateAndTime(*callback*) method</a>
+### <a id="OnvifServiceDevice-getSystemDateAndTime-method">getSystemDateAndTime(*[callback]*) method</a>
 
 This method sends a `GetSystemDateAndTime` command.
 
-### <a name="OnvifServiceDevice-reboot-method">reboot(*callback*) method</a>
+### <a id="OnvifServiceDevice-reboot-method">reboot(*[callback]*) method</a>
 
 This method sends a `Reboot` command.
 
-### <a name="OnvifServiceDevice-getUsers-method">getUsers(*callback*) method</a>
+### <a id="OnvifServiceDevice-getUsers-method">getUsers(*[callback]*) method</a>
 
 This method sends a `GetUsers` command.
 
-### <a name="OnvifServiceDevice-createUsers-method">createUsers(*params, callback*) method</a>
+### <a id="OnvifServiceDevice-createUsers-method">createUsers(*params[, callback]*) method</a>
 
 This method sends a `CreateUsers` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1182,7 +1295,7 @@ Property |             | Type    | Required |Description
          | `UserLevel` | String  | required | Either "Administrator", "Operator", "User", or "Anonymous"
 
 ```JavaScript
-var params = {
+let params = {
   'User' : [
     {'Username': 'test1', 'Password' : 'password', 'UserLevel': 'Administrator'},
     {'Username': 'test2', 'Password' : 'password', 'UserLevel': 'Operator'},
@@ -1190,12 +1303,14 @@ var params = {
   ]
 };
 
-device.services.device.createUsers(params, (error, result) => {
+device.services.device.createUsers(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceDevice-deleteUsers-method">deleteUsers(*params, callback*) method</a>
+### <a id="OnvifServiceDevice-deleteUsers-method">deleteUsers(*params[, callback]*) method</a>
 
 This method sends a `DeleteUsers` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1205,7 +1320,7 @@ Property |             | Type    | Required |Description
          | `Username`  | String  | required | Username
 
 ```JavaScript
-var params = {
+let params = {
   'User' : [
     {'Username': 'test1'},
     {'Username': 'test2'},
@@ -1213,12 +1328,14 @@ var params = {
   ]
 };
 
-device.services.device.deleteUsers(params, (error, result) => {
+device.services.device.deleteUsers(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceDevice-setUser-method">setUser(*params, callback*) method</a>
+### <a id="OnvifServiceDevice-setUser-method">setUser(*params[, callback]*) method</a>
 
 This method sends a `SetUser` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1230,7 +1347,7 @@ Property |             | Type    | Required |Description
          | `UserLevel` | String  | required | Either "Administrator", "Operator", "User", or "Anonymous"
 
 ```JavaScript
-var params = {
+let params = {
   'User' : [
     {'Username': 'test1', 'Password' : 'password', 'UserLevel': 'Administrator'},
     {'Username': 'test2', 'Password' : 'password', 'UserLevel': 'Operator'},
@@ -1238,20 +1355,22 @@ var params = {
   ]
 };
 
-device.services.device.setUser(params, (error, result) => {
+device.services.device.setUser(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceDevice-getRelayOutputs-method">getRelayOutputs(*callback*) method</a>
+### <a id="OnvifServiceDevice-getRelayOutputs-method">getRelayOutputs(*[callback]*) method</a>
 
 This method sends a `RetRelayOutputs` command.
 
-### <a name="OnvifServiceDevice-getNTP-method">getNTP(*callback*) method</a>
+### <a id="OnvifServiceDevice-getNTP-method">getNTP(*[callback]*) method</a>
 
 This method sends a `GetNTP` command.
 
-### <a name="OnvifServiceDevice-setNTP-method">setNTP(*params, callback*) method</a>
+### <a id="OnvifServiceDevice-setNTP-method">setNTP(*params[, callback]*) method</a>
 
 This method sends a `SetNTP` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1264,25 +1383,27 @@ Property    |               | Type    | Required |Description
             | `IPv6Address` | String  | optional | IPv6 address
 
 ```JavaScript
-var params = {
+let params = {
   'FromDHCP': false,
   'NTPManual': {'Type': "IPv4", 'IPv4Address': '192.168.10.1'}
 };
 
-device.services.device.setNTP(params, (error, result) => {
+device.services.device.setNTP(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceDevice-getDynamicDNS-method">getDynamicDNS(*callback*) method</a>
+### <a id="OnvifServiceDevice-getDynamicDNS-method">getDynamicDNS(*[callback]*) method</a>
 
 This method sends a `GetDynamicDNS` command.
 
-### <a name="OnvifServiceDevice-getZeroConfiguration-method">getZeroConfiguration(*callback*) method</a>
+### <a id="OnvifServiceDevice-getZeroConfiguration-method">getZeroConfiguration(*[callback]*) method</a>
 
 This method sends a `GetZeroConfiguration` command.
 
-### <a name="OnvifServiceDevice-getServices-method">getServices(*params, callback*) method</a>
+### <a id="OnvifServiceDevice-getServices-method">getServices(*params[, callback]*) method</a>
 
 This method sends a `GetServices` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1291,25 +1412,27 @@ Property            | Type    | Required |Description
 `IncludeCapability` | Boolean | required | true or false
 
 ```JavaScript
-var params = {
+let params = {
   'IncludeCapability': true
 };
 
-device.services.device.getServices(params, (error, result) => {
+device.services.device.getServices(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceDevice-getServiceCapabilities-method">getServiceCapabilities(*callback*) method</a>
+### <a id="OnvifServiceDevice-getServiceCapabilities-method">getServiceCapabilities(*[callback]*) method</a>
 
 This method sends a `GetServiceCapabilities` command.
 
 ---------------------------------------
-## <a name="OnvifServiceMedia-object">`OnvifServiceMedia` object</a>
+## <a id="OnvifServiceMedia-object">`OnvifServiceMedia` object</a>
 
 This object represents the [ONVIF Media Service](http://www.onvif.org/specs/srv/media/ONVIF-Media-Service-Spec-v1606.pdf).
 
-### <a name="OnvifServiceMedia-getStreamUri-method">getStreamUri(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getStreamUri-method">getStreamUri(*params[, callback]*) method</a>
 
 This method sends a `GetStreamUri` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1319,21 +1442,23 @@ Property       | Type    | Required |Description
 `Protocol`     | String  | required | "UDP", "HTTP", or "RTSP"
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6',
   'Protocol': 'UDP',
 };
 
-device.services.media.getStreamUri(params, (error, result) => {
+device.services.media.getStreamUri(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getVideoEncoderConfigurations-method">getVideoEncoderConfigurations(*callback*) method</a>
+### <a id="OnvifServiceMedia-getVideoEncoderConfigurations-method">getVideoEncoderConfigurations(*[callback]*) method</a>
 
 This method sends a `GetVideoEncoderConfigurations` command.
 
-### <a name="OnvifServiceMedia-getVideoEncoderConfiguration-method">getVideoEncoderConfiguration(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getVideoEncoderConfiguration-method">getVideoEncoderConfiguration(*params[, callback]*) method</a>
 
 This method sends a `GetVideoEncoderConfiguration` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1342,16 +1467,18 @@ Property             | Type    | Required |Description
 `ConfigurationToken` | String  | required | a token of the configurationToken
 
 ```JavaScript
-var params = {
+let params = {
   'ConfigurationToken': '2_def_conf6'
 };
 
-device.services.media.getVideoEncoderConfiguration(params, (error, result) => {
+device.services.media.getVideoEncoderConfiguration(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getCompatibleVideoEncoderConfigurations-method">getCompatibleVideoEncoderConfigurations(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getCompatibleVideoEncoderConfigurations-method">getCompatibleVideoEncoderConfigurations(*params[, callback]*) method</a>
 
 This method sends a `GetCompatibleVideoEncoderConfigurations` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1360,15 +1487,17 @@ Property       | Type    | Required |Description
 `ProfileToken` | String  | required | a token of the profile
 
 ```JavaScript
-var params = {
-  'ProfileToken': '2_def_profile6',
+let params = {
+  'ProfileToken': '2_def_profile6'
 };
-device.services.media.getCompatibleVideoEncoderConfigurations(params, (error, result) => {
+device.services.media.getCompatibleVideoEncoderConfigurations(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getVideoEncoderConfigurationOptions-method">getVideoEncoderConfigurationOptions(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getVideoEncoderConfigurationOptions-method">getVideoEncoderConfigurationOptions(*params[, callback]*) method</a>
 
 This method sends a `GetVideoEncoderConfigurationOptions` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1378,17 +1507,19 @@ Property             | Type    | Required |Description
 `ConfigurationToken` | String  | optional | a token of the configuration
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6',
   'ConfigurationToken': '2_def_conf6'
 };
 
-device.services.media.getVideoEncoderConfigurationOptions(params, (error, result) => {
+device.services.media.getVideoEncoderConfigurationOptions(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getGuaranteedNumberOfVideoEncoderInstances-method">getGuaranteedNumberOfVideoEncoderInstances(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getGuaranteedNumberOfVideoEncoderInstances-method">getGuaranteedNumberOfVideoEncoderInstances(*params[, callback]*) method</a>
 
 This method sends a `GetGuaranteedNumberOfVideoEncoderInstances` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1397,20 +1528,22 @@ Property             | Type    | Required |Description
 `ConfigurationToken` | String  | required | a token of the configuration
 
 ```JavaScript
-var params = {
+let params = {
   'ConfigurationToken': '2_def_conf6',
 };
 
-device.services.media.getGuaranteedNumberOfVideoEncoderInstances(params, (error, result) => {
+device.services.media.getGuaranteedNumberOfVideoEncoderInstances(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getProfiles-method">getProfiles(*callback*) method</a>
+### <a id="OnvifServiceMedia-getProfiles-method">getProfiles(*[callback]*) method</a>
 
 This method sends a `GetProfiles` command.
 
-### <a name="OnvifServiceMedia-getProfile-method">getProfile(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getProfile-method">getProfile(*params[, callback]*) method</a>
 
 This method sends a `GetProfile` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1419,16 +1552,18 @@ Property             | Type    | Required |Description
 `ProfileToken`       | String  | required | a token of the profile
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6'
 };
 
-device.services.media.getProfile(params, (error, result) => {
+device.services.media.getProfile(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-createProfile-method">createProfile(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-createProfile-method">createProfile(*params[, callback]*) method</a>
 
 This method sends a `CreateProfile` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1438,17 +1573,19 @@ Property | Type    | Required |Description
 `Token`  | String  | optional | a token of the profile
 
 ```JavaScript
-var params = {
+let params = {
   'Name': 'TestProfile1',
   'Token': 'TestProfile1'
 };
 
-device.services.media.createProfile(params, (error, result) => {
+device.services.media.createProfile(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-deleteProfile-method">deleteProfile(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-deleteProfile-method">deleteProfile(*params[, callback]*) method</a>
 
 This method sends a `DeleteProfile` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1457,20 +1594,22 @@ Property | Type    | Required |Description
 `Token`  | String  | required | a token of the profile
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': 'TestProfile1'
 };
 
-device.services.media.deleteProfile(params, (error, result) => {
+device.services.media.deleteProfile(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getVideoSources-method">getVideoSources(*callback*) method</a>
+### <a id="OnvifServiceMedia-getVideoSources-method">getVideoSources(*[callback]*) method</a>
 
 This method sends a `GetVideoSources` command.
 
-### <a name="OnvifServiceMedia-getVideoSourceConfiguration-method">getVideoSourceConfiguration(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getVideoSourceConfiguration-method">getVideoSourceConfiguration(*params[, callback]*) method</a>
 
 This method sends a `GetVideoSourceConfiguration` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1479,20 +1618,22 @@ Property             | Type    | Required |Description
 `ConfigurationToken` | String  | required | a token of the configuration
 
 ```JavaScript
-var params = {
+let params = {
   'ConfigurationToken': '2_def_conf6'
 };
 
-device.services.media.getVideoSourceConfiguration(params, (error, result) => {
+device.services.media.getVideoSourceConfiguration(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getVideoSourceConfigurations-method">getVideoSourceConfigurations(*callback*) method</a>
+### <a id="OnvifServiceMedia-getVideoSourceConfigurations-method">getVideoSourceConfigurations(*[callback]*) method</a>
 
 This method sends a `GetVideoSourceConfigurations` command.
 
-### <a name="OnvifServiceMedia-getCompatibleVideoSourceConfigurations-method">getCompatibleVideoSourceConfigurations(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getCompatibleVideoSourceConfigurations-method">getCompatibleVideoSourceConfigurations(*params[, callback]*) method</a>
 
 This method sends a `GetCompatibleVideoSourceConfigurations` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1501,16 +1642,18 @@ Property | Type    | Required |Description
 `Token`  | String  | required | a token of the profile
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6'
 };
 
-device.services.media.getCompatibleVideoSourceConfigurations(params, (error, result) => {
+device.services.media.getCompatibleVideoSourceConfigurations(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getVideoSourceConfigurationOptions-method">getVideoSourceConfigurationOptions(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getVideoSourceConfigurationOptions-method">getVideoSourceConfigurationOptions(*params[, callback]*) method</a>
 
 This method sends a `GetVideoSourceConfigurationOptions` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1520,17 +1663,19 @@ Property             | Type    | Required |Description
 `ConfigurationToken` | String  | optional | a token of the configuration
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6',
   'ConfigurationToken': '2_def_conf6'
 };
 
-device.services.media.getVideoSourceConfigurationOptions(params, (error, result) => {
+device.services.media.getVideoSourceConfigurationOptions(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getMetadataConfiguration-method">getMetadataConfiguration(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getMetadataConfiguration-method">getMetadataConfiguration(*params[, callback]*) method</a>
 
 This method sends a `GetMetadataConfiguration` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1539,20 +1684,22 @@ Property             | Type    | Required |Description
 `ConfigurationToken` | String  | required | a token of the configuration
 
 ```JavaScript
-var params = {
+let params = {
   'ConfigurationToken': 'metadata1',
 };
 
-device.services.media.getMetadataConfiguration(params, (error, result) => {
+device.services.media.getMetadataConfiguration(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getMetadataConfigurations-method">getMetadataConfigurations(*callback*) method</a>
+### <a id="OnvifServiceMedia-getMetadataConfigurations-method">getMetadataConfigurations(*[callback]*) method</a>
 
 This method sends a `GetMetadataConfigurations` command.
 
-### <a name="OnvifServiceMedia-getCompatibleMetadataConfigurations-method">getCompatibleMetadataConfigurations(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getCompatibleMetadataConfigurations-method">getCompatibleMetadataConfigurations(*params[, callback]*) method</a>
 
 This method sends a `GetCompatibleMetadataConfigurations` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1561,16 +1708,18 @@ Property             | Type    | Required |Description
 `ProfileToken`       | String  | required | a token of the profile
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6'
 };
 
-device.services.media.getCompatibleMetadataConfigurations(params, (error, result) => {
+device.services.media.getCompatibleMetadataConfigurations(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getMetadataConfigurationOptions-method">getMetadataConfigurationOptions(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getMetadataConfigurationOptions-method">getMetadataConfigurationOptions(*params[, callback]*) method</a>
 
 This method sends a `GetMetadataConfigurationOptions` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1580,21 +1729,23 @@ Property             | Type    | Required |Description
 `ConfigurationToken` | String  | optional | a token of the configuration
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6',
   'ConfigurationToken': 'Conf001'
 };
 
-device.services.media.getMetadataConfigurationOptions(params, (error, result) => {
+device.services.media.getMetadataConfigurationOptions(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getAudioSources-method">getAudioSources(*callback*) method</a>
+### <a id="OnvifServiceMedia-getAudioSources-method">getAudioSources(*[callback]*) method</a>
 
 This method sends a `GetAudioSources` command.
 
-### <a name="OnvifServiceMedia-getAudioSourceConfiguration-method">getAudioSourceConfiguration(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getAudioSourceConfiguration-method">getAudioSourceConfiguration(*params[, callback]*) method</a>
 
 This method sends a `GetAudioSourceConfiguration` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1603,20 +1754,22 @@ Property             | Type    | Required |Description
 `ConfigurationToken` | String  | required | a token of the configuration
 
 ```JavaScript
-var params = {
+let params = {
   'ConfigurationToken': 'AudioSourceConfig',
 };
 
-device.services.media.getAudioSourceConfiguration(params, (error, result) => {
+device.services.media.getAudioSourceConfiguration(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getAudioSourceConfigurations-method">getAudioSourceConfigurations(*callback*) method</a>
+### <a id="OnvifServiceMedia-getAudioSourceConfigurations-method">getAudioSourceConfigurations(*[callback]*) method</a>
 
 This method sends a `GetAudioSourceConfigurations` command.
 
-### <a name="OnvifServiceMedia-getCompatibleAudioSourceConfigurations-method">getCompatibleAudioSourceConfigurations(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getCompatibleAudioSourceConfigurations-method">getCompatibleAudioSourceConfigurations(*params[, callback]*) method</a>
 
 This method sends a `GetCompatibleAudioSourceConfigurations` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1625,16 +1778,18 @@ Property             | Type    | Required |Description
 `ProfileToken` | String  | required | a token of the profile
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6'
 };
 
-device.services.media.getCompatibleAudioSourceConfigurations(params, (error, result) => {
+device.services.media.getCompatibleAudioSourceConfigurations(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getAudioSourceConfigurationOptions-method">getAudioSourceConfigurationOptions(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getAudioSourceConfigurationOptions-method">getAudioSourceConfigurationOptions(*params[, callback]*) method</a>
 
 This method sends a `GetAudioSourceConfigurationOptions` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1644,16 +1799,18 @@ Property             | Type    | Required |Description
 `ConfigurationToken` | String  | optional | a token of the configuration
 
 ```JavaScript
-var params = {
+let params = {
   'ConfigurationToken': 'AudioSourceConfig'
 };
 
-device.services.media.getAudioSourceConfigurationOptions(params, (error, result) => {
+device.services.media.getAudioSourceConfigurationOptions(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getAudioEncoderConfiguration-method">getAudioEncoderConfiguration(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getAudioEncoderConfiguration-method">getAudioEncoderConfiguration(*params[, callback]*) method</a>
 
 This method sends a `GetAudioEncoderConfiguration` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1662,20 +1819,22 @@ Property             | Type    | Required |Description
 `ConfigurationToken` | String  | required | a token of the configuration
 
 ```JavaScript
-var params = {
+let params = {
   'ConfigurationToken': 'AudioSourceConfig'
 };
 
-device.services.media.getAudioEncoderConfiguration(params, (error, result) => {
+device.services.media.getAudioEncoderConfiguration(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getAudioEncoderConfigurations-method">getAudioEncoderConfigurations(*callback*) method</a>
+### <a id="OnvifServiceMedia-getAudioEncoderConfigurations-method">getAudioEncoderConfigurations(*[callback]*) method</a>
 
 This method sends a `GetAudioEncoderConfigurations` command.
 
-### <a name="OnvifServiceMedia-getCompatibleAudioEncoderConfigurations-method">getCompatibleAudioEncoderConfigurations(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getCompatibleAudioEncoderConfigurations-method">getCompatibleAudioEncoderConfigurations(*params[, callback]*) method</a>
 
 This method sends a `GetCompatibleAudioEncoderConfigurations` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1684,16 +1843,18 @@ Property       | Type    | Required |Description
 `ProfileToken` | String  | required | a token of the profile
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6'
 };
 
-device.services.media.getCompatibleAudioEncoderConfigurations(params, (error, result) => {
+device.services.media.getCompatibleAudioEncoderConfigurations(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getAudioEncoderConfigurationOptions-method">getAudioEncoderConfigurationOptions(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getAudioEncoderConfigurationOptions-method">getAudioEncoderConfigurationOptions(*params[, callback]*) method</a>
 
 This method sends a `GetAudioEncoderConfigurationOptions` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1703,17 +1864,19 @@ Property             | Type    | Required |Description
 `ConfigurationToken` | String  | optional | a token of the configuration
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6',
   'ConfigurationToken': 'AudioSourceConfig'
 };
 
-device.services.media.getAudioEncoderConfigurationOptions(params, (error, result) => {
+device.services.media.getAudioEncoderConfigurationOptions(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServiceMedia-getSnapshotUri-method">getSnapshotUri(*params, callback*) method</a>
+### <a id="OnvifServiceMedia-getSnapshotUri-method">getSnapshotUri(*params[, callback]*) method</a>
 
 This method sends a `getSnapshotUri` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1722,25 +1885,27 @@ Property             | Type    | Required |Description
 `ProfileToken`       | String  | required | a token of the profile
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6'
 };
 
-device.services.media.getSnapshotUri(params, (error, result) => {
+device.services.media.getSnapshotUri(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
 ---------------------------------------
-## <a name="OnvifServicePtz-object">`OnvifServicePtz` object</a>
+## <a id="OnvifServicePtz-object">`OnvifServicePtz` object</a>
 
 This object represents the [ONVIF PTZ Service](http://www.onvif.org/specs/srv/ptz/ONVIF-PTZ-Service-Spec-v261.pdf).
 
-### <a name="OnvifServicePtz-getNodes-method">getNodes(*callback*) method</a>
+### <a id="OnvifServicePtz-getNodes-method">getNodes(*[callback]*) method</a>
 
 This method sends a `getNodes` command.
 
-### <a name="OnvifServicePtz-getNode-method">getNode(*params, callback*) method</a>
+### <a id="OnvifServicePtz-getNode-method">getNode(*params[, callback]*) method</a>
 
 This method sends a `GetNode` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1749,38 +1914,42 @@ Property    | Type    | Required |Description
 `NodeToken` | String  | required | a token of the node
 
 ```JavaScript
-var params = {
+let params = {
   'NodeToken': 'PtzNode'
 };
 
-device.services.ptz.getNode(params, (error, result) => {
+device.services.ptz.getNode(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServicePtz-getConfigurations-method">getConfigurations(*callback*) method</a>
+### <a id="OnvifServicePtz-getConfigurations-method">getConfigurations(*[callback]*) method</a>
 
 This method sends a `GetConfigurations` command.
 
-### <a name="OnvifServicePtz-getConfiguration-method">getConfiguration(*params, callback*) method</a>
+### <a id="OnvifServicePtz-getConfiguration-method">getConfiguration(*params[, callback]*) method</a>
 
 This method sends a `GetConfiguration` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
 Property             | Type    | Required |Description
 :--------------------|:--------|:---------|:----------
-`ConfigurationToken` | String  | required | a token of the targeted PTZ node
+`ConfigurationToken` | String  | required | a token of the targeted PTZ configuration
 
 ```JavaScript
-var params = {
+let params = {
   'ConfigurationToken': 'PtzConf1'
 };
 
-device.services.ptz.getConfiguration(params, (error, result) => {
+device.services.ptz.getConfiguration(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServicePtz-getConfigurationOptions-method">getConfigurationOptions(*params, callback*) method</a>
+### <a id="OnvifServicePtz-getConfigurationOptions-method">getConfigurationOptions(*params[, callback]*) method</a>
 
 This method sends a `GetConfigurationOptions` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1789,15 +1958,18 @@ Property             | Type    | Required |Description
 `ConfigurationToken` | String  | required | a token of the targeted PTZ node
 
 ```JavaScript
-var params = {
+let params = {
   'ConfigurationToken': 'PtzConf1'
 };
 
-device.services.ptz.getConfigurationOptions(params, (error, result) => {
+device.services.ptz.getConfigurationOptions(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
+```
 
-### <a name="OnvifServicePtz-getStatus-method">getStatus(*params, callback*) method</a>
+### <a id="OnvifServicePtz-getStatus-method">getStatus(*params[, callback]*) method</a>
 
 This method sends a `GetStatus` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1806,15 +1978,18 @@ Property             | Type    | Required |Description
 `ProfileToken`       | String  | required | a token of the targeted PTZ node
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': 'PtzConf1'
 };
 
-device.services.ptz.getStatus(params, (error, result) => {
+device.services.ptz.getStatus(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
+```
 
-### <a name="OnvifServicePtz-continuousMove-method">continuousMove(*params, callback*) method</a>
+### <a id="OnvifServicePtz-continuousMove-method">continuousMove(*params[, callback]*) method</a>
 
 This method sends a `ContinuousMove` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1829,18 +2004,20 @@ Property       |     | Type     | Required |Description
 
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6',
   'Velocity'    : {'x': -1, 'y': 0, 'z': 0},
   'Timeout'     : 1 
 };
 
-device.services.ptz.continuousMove(params, (error, result) => {
+device.services.ptz.continuousMove(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServicePtz-absoluteMove-method">absoluteMove(*params, callback*) method</a>
+### <a id="OnvifServicePtz-absoluteMove-method">absoluteMove(*params[, callback]*) method</a>
 
 This method sends a `AbsoluteMove` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1857,18 +2034,20 @@ Property       |     | Type     | Required |Description
                | `z` | Float    | required | Speed of zoom (in the range of -1.0 to 1.0)
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': cam['ProfileToken'],
   'Position'    : {'x': 0, 'y': 0, 'z': 0.003},
   'Speed'       : {'x': 1, 'y': 1, 'z': 1}
 };
 
-device.services.ptz.absoluteMove(params, (error, result) => {
+device.services.ptz.absoluteMove(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServicePtz-relativeMove-method">relativeMove(*params, callback*) method</a>
+### <a id="OnvifServicePtz-relativeMove-method">relativeMove(*params[, callback]*) method</a>
 
 This method sends a `RelativeMove` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1879,21 +2058,26 @@ Property       |     | Type     | Required |Description
                | `x` | Float    | required | Translation of pan (in the range of -1.0 to 1.0)
                | `y` | Float    | required | Translation of tilt (in the range of -1.0 to 1.0)
                | `z` | Float    | required | Translation of zoom (in the range of -1.0 to 1.0)
-`Timeout`      |     | Intenger | optional | Timeout (seconds)
+`Speed`        |     | Object   | required |
+               | `x` | Float    | required | Speed of pan (in the range of -1.0 to 1.0)
+               | `y` | Float    | required | Speed of tilt (in the range of -1.0 to 1.0)
+               | `z` | Float    | required | Speed of zoom (in the range of -1.0 to 1.0)
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6',
-  'Translation' : {'x': 0.1, 'y': 0.1, 'z': 0}
-  'Timeout'     : 1 
+  'Translation' : {'x': 0.1, 'y': 0.1, 'z': 0},
+  'Speed'       : {'x': 1, 'y': 1, 'z': 1}
 };
 
-device.services.ptz.relativeMove(params, (error, result) => {
+device.services.ptz.relativeMove(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServicePtz-stop-method">stop(*params, callback*) method</a>
+### <a id="OnvifServicePtz-stop-method">stop(*params[, callback]*) method</a>
 
 This method sends a `stop` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1904,18 +2088,20 @@ Property       | Type     | Required |Description
 `Zoom`         | Boolean  | optional | true or false
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6',
   'PanTilt': true,
   'Zoom': true
 };
 
-device.services.ptz.stop(params, (error, result) => {
+device.services.ptz.stop(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServicePtz-gotoHomePosition-method">gotoHomePosition(*params, callback*) method</a>
+### <a id="OnvifServicePtz-gotoHomePosition-method">gotoHomePosition(*params[, callback]*) method</a>
 
 This method sends a `GotoHomePosition` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1925,17 +2111,19 @@ Property       | Type     | Required |Description
 `Speed`        | Float    | optional | Speed in the range of 0.0 to 1.0
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6',
   'Speed': 0.5
 };
 
-device.services.ptz.gotoHomePosition(params, (error, result) => {
+device.services.ptz.gotoHomePosition(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServicePtz-setHomePosition-method">setHomePosition(*params, callback*) method</a>
+### <a id="OnvifServicePtz-setHomePosition-method">setHomePosition(*params[, callback]*) method</a>
 
 This method sends a `SetHomePosition` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1944,16 +2132,18 @@ Property       | Type     | Required |Description
 `ProfileToken` | String   | required | a token of the profile
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6'
 };
 
-device.services.ptz.SetHomePosition(params, (error, result) => {
+device.services.ptz.setHomePosition(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServicePtz-setPreset-method">setPreset(*params, callback*) method</a>
+### <a id="OnvifServicePtz-setPreset-method">setPreset(*params[, callback]*) method</a>
 
 This method sends a `SetPreset` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1964,18 +2154,19 @@ Property       | Type     | Required |Description
 `PresetName`   | String   | optional | a name of the preset
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6',
-  'PresetToken' : '12',
   'PresetName'  : 'PresetTest1'
 };
 
-device.services.ptz.setPreset(params, (error, result) => {
+device.services.ptz.setPreset(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServicePtz-getPresets-method">getPresets(*params, callback*) method</a>
+### <a id="OnvifServicePtz-getPresets-method">getPresets(*params[, callback]*) method</a>
 
 This method sends a `GetPresets` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -1984,16 +2175,18 @@ Property       | Type     | Required |Description
 `ProfileToken` | String   | required | a token of the profile
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6'
 };
 
-device.services.ptz.getPresets(params, (error, result) => {
+device.services.ptz.getPresets(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServicePtz-gotoPreset-method">gotoPreset(*params, callback*) method</a>
+### <a id="OnvifServicePtz-gotoPreset-method">gotoPreset(*params[, callback]*) method</a>
 
 This method sends a `GotoPreset` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -2007,18 +2200,20 @@ Property       |     | Type     | Required |Description
                | `z` | Float    | required | Speed of zoom (in the range of 0.0 to 1.0)
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6',
   'PresetToken' : '12',
   'Speed'       : {'x': 1, 'y': 1, 'z': 1}
 };
 
-device.services.ptz.gotoPreset(params, (error, result) => {
+device.services.ptz.gotoPreset(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
-### <a name="OnvifServicePtz-removePreset-method">removePreset(*params, callback*) method</a>
+### <a id="OnvifServicePtz-removePreset-method">removePreset(*params[, callback]*) method</a>
 
 This method sends a `RemovePreset` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
 
@@ -2028,18 +2223,20 @@ Property       |     | Type     | Required |Description
 `PresetToken`  |     | String   | required | a token of the preset
 
 ```JavaScript
-var params = {
+let params = {
   'ProfileToken': '2_def_profile6',
   'PresetToken' : '12'
 };
 
-device.services.ptz.removePreset(params, (error, result) => {
+device.services.ptz.removePreset(params).then((result) => {
   console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
 });
 ```
 
 ---------------------------------------
-## <a name="References"> References</a>
+## <a id="References"> References</a>
 
 This module is based on the [ONVIF specifications](http://www.onvif.org/Documents/Specifications.aspx):
 
@@ -2053,26 +2250,39 @@ This module is based on the [ONVIF specifications](http://www.onvif.org/Document
 * [ONVIF Application Programmer's Guide ver 1.0](http://www.onvif.org/Portals/0/documents/WhitePapers/ONVIF_WG-APG-Application_Programmer%27s_Guide.pdf)
 
 ---------------------------------------
-## <a name="License"> License</a>
+## <a id="Release-Note">Release Note</a>
+
+* v0.1.0 (2017-08-30)
+  * Rewrote all scripts to be modern coding style such as `let`, `const`, and `Promise`. All of the asynchronous methods now return a `Promise` object.
+  * Dramatically improved the discovery processs.
+  * Supported the devices which do not support the `GetSystemDateAndTime` command. In the earlier versions, the `init` method failed if the targeted device did not support the command. Now the `init()` method will work well with such devices.
+  * The `startDiscovery()` and `stopDiscovery()` mehtods became deprecated.
+  * Newly added the `startProbe()` and `stopProbe()` methods.
+  * Appended a failure reason text to an `Error.message` parsing a SOAP message from a device.
+  * Fixed bugs of the `OnvifServicePtz.getNode()`, `OnvifServicePtz.getConfiguration()`, and `OnvifServicePtz.getConfigurationOptions()` methods. The methods sent a wrong SOAP message.
+  * Implemented the `Speed` parameter in the `OnvifServicePtz.relativeMove()` method.
+
+---------------------------------------
+## <a id="License"> License</a>
 
 The MIT License (MIT)
 
-Copyright 2016 Futomi Hatano
+Copyright (c) 2016 - 2017 Futomi Hatano
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to
-deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-sell copies of the Software, and to permit persons to whom the Software is
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-IN THE SOFTWARE.
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

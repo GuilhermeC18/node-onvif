@@ -114,31 +114,29 @@ function wsServerRequest(conn) {
 var devices = {};
 function startDiscovery(conn) {
 	devices = {};
-	var names = {};
-	onvif.startDiscovery((device) => {
-		var odevice = new onvif.OnvifDevice({
-			xaddr: device.xaddrs[0]
+	let names = {};
+	onvif.startProbe().then((device_list) => {
+		device_list.forEach((device) => {
+			let odevice = new onvif.OnvifDevice({
+				xaddr: device.xaddrs[0]
+			});
+			let addr = odevice.address;
+			devices[addr] = odevice;
+			names[addr] = device.name;
 		});
-		var addr = odevice.address;
-		devices[addr] = odevice;
-		names[addr] = device.name;
+		var devs = {};
+		for(var addr in devices) {
+			devs[addr] = {
+				name: names[addr],
+				address: addr
+			}
+		}
+		let res = {'id': 'startDiscovery', 'result': devs};
+		conn.send(JSON.stringify(res));
+	}).catch((error) => {
+		let res = {'id': 'connect', 'error': error.message};
+		conn.send(JSON.stringify(res));
 	});
-
-	setTimeout(() => {
-		onvif.stopDiscovery(() => {
-			setTimeout(() => {
-				var devs = {};
-				for(var addr in devices) {
-					devs[addr] = {
-						name: names[addr],
-						address: addr
-					}
-				}
-				var res = {'id': 'startDiscovery', 'result': devs};
-				conn.send(JSON.stringify(res));
-			}, 1000);
-		});
-	}, 2000);
 }
 
 function connect(conn, params) {
