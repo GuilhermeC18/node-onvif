@@ -12,7 +12,7 @@ Before you try the ONVIF Network Camera Manager, you have to install some Node m
 ```
 $ cd ~
 $ npm install node-onvif
-$ npm install websocket.io
+$ npm install websocket
 ```
 
 You can starts the `server.js` as follows:
@@ -43,8 +43,10 @@ I tryed some ONVIF network cameras as follows:
 - [Panasonic BB-SC384B](http://sol.panasonic.biz/security/netwkcam/lineup/sc384b.html)
   - Though this model is sold in Japan, it seems to be sold in other contries as a different model name, such as WV-SC384 in [United Kingdom](http://business.panasonic.co.uk/security-solutions/products-and-accessories/video-surveillance/ip-security-systems-and-products/network-ptz-dome-security-cameras/wv-sc384?_ga=1.208388497.2069730874.1479653348) and [France](http://business.panasonic.fr/solutions-de-securite/produits-et-accessoires-panasonic-pour-cameras-professionnelles/produits-de-securite/produits-ip/cameras-domes-reseau-ptz/wv-sc384).
   - This application works completely with this model.
+- [Canon VB-S30D](http://cweb.canon.jp/webview/lineup/vbs30d/index.html) [[Japan](http://cweb.canon.jp/webview/lineup/vbs30d/index.html)][[USA](https://www.usa.canon.com/internet/portal/us/home/support/details/network-video-solutions/all-network-cameras/vb-s30d/vb-s30d)][[France](https://www.canon.fr/for_work/business-products/network-cameras/vb-s30d/)][[UK](https://www.canon.co.uk/for_work/business-products/network-cameras/vb-s30d/)]
+  - This application works completely with this model.
 - [Sumpple S822](http://www.sumpple.com/enterprise/product/view/13)
   - This model supports both of PTZ and snapshot, but zoom is not supported.
   - PTZ is really slow.
 - [DBPOWER Home Surveillance Camera](http://www.dbpow.com/VA0130.html)
-  - This model supports snapshot though PTZ is not supported.
+  - This model supports snapshot while PTZ is not supported.

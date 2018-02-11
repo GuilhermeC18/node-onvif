@@ -7,7 +7,7 @@ try {
 } catch(e) {
 	onvif = require('node-onvif');
 }
-var ws = require('websocket.io');
+var WebSocketServer = require('websocket').server;
 var http = require('http');
 var fs = require('fs');
 var port = 8880;
@@ -17,8 +17,10 @@ var port = 8880;
 	http_server.listen(port, function() {
 		console.log("Listening on port " + port);
 	});
-	var wsserver = ws.attach(http_server);
-	wsserver.on('connection', wsServerRequest);
+	var wsserver = new WebSocketServer({
+		httpServer: http_server,
+	});
+	wsserver.on('request', wsServerRequest);
 })();
 
 function httpServerRequest(req, res) {
@@ -83,9 +85,13 @@ function httpServerResponse404(url, res) {
 
 var client_list = [];
 
-function wsServerRequest(conn) {
+function wsServerRequest(request) {
+	var conn = request.accept(null, request.origin);
 	conn.on("message", function(message) {
-		var data = JSON.parse(message);
+		if(message.type !== 'utf8') {
+			return;
+		}
+		var data = JSON.parse(message.utf8Data);
 		var method = data['method'];
 		var params = data['params'];
 		if(method === 'startDiscovery') {
