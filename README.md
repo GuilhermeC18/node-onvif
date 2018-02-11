@@ -2252,6 +2252,9 @@ This module is based on the [ONVIF specifications](http://www.onvif.org/Document
 ---------------------------------------
 ## <a id="Release-Note">Release Note</a>
 
+* v0.1.3 (2018-02-11)
+  * Fixed the bug of the device initialization. ([Pull Request #20](https://github.com/futomi/node-onvif/pull/20))
+  * The sample app "[ONVIF Network Camera Manager](https://github.com/futomi/node-onvif/tree/master/sample)" now works well on node v8. ([Issue #6](https://github.com/futomi/node-onvif/issues/6))
 * v0.1.0 (2017-08-30)
   * Rewrote all scripts to be modern coding style such as `let`, `const`, and `Promise`. All of the asynchronous methods now return a `Promise` object.
   * Dramatically improved the discovery processs.
