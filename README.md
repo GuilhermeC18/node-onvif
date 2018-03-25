@@ -2242,6 +2242,9 @@ This module is based on the [ONVIF specifications](http://www.onvif.org/Document
 ---------------------------------------
 ## <a id="Release-Note">Release Note</a>
 
+* v0.1.4 (2018-03-25)
+  * Clarified the instruction of the installation in the README.md and Added the `engines` section to the package.json. ([Pull Request #24](https://github.com/futomi/node-onvif/pull/24))
+  * Fixed the bug of the loop of `SearchDomain`. ([Pull Request #23](https://github.com/futomi/node-onvif/pull/23))
 * v0.1.3 (2018-02-11)
   * Fixed the bug of the device initialization. ([Pull Request #20](https://github.com/futomi/node-onvif/pull/20))
   * The sample app "[ONVIF Network Camera Manager](https://github.com/futomi/node-onvif/tree/master/sample)" now works well on node v8. ([Issue #6](https://github.com/futomi/node-onvif/issues/6))
@@ -2260,7 +2263,7 @@ This module is based on the [ONVIF specifications](http://www.onvif.org/Document
 
 The MIT License (MIT)
 
-Copyright (c) 2016 - 2017 Futomi Hatano
+Copyright (c) 2016 - 2018 Futomi Hatano
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
