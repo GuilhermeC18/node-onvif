@@ -17,20 +17,10 @@ The node-onvif provides you with the APIs as follows:
 
 Besides, the node-onvif provides you with simple APIs that allow you to control ONVIF network cameras easily even if you are not familiar with the ONVIF specifications.
 
-## Dependencies
-
-- [Node.js](https://nodejs.org/en/) 4.4 +
-  - Though the node-enocean-utils works on Node 4 for now, it is strongly recommended to use Node 6 or newer. The node-onvif will not support Node 4 in the future.
-- [xml2js](https://www.npmjs.com/package/xml2js) 0.4.17 +
-- [html](https://www.npmjs.com/package/html) 1.0.0 + (optional)
-
 ## Installation
 
 ```
-$ cd ~
-$ npm install xml2js
-$ npm install html
-$ npm install node-onvif
+$ npm install -s node-onvif
 ```
 
 ## Sample Application
