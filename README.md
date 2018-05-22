@@ -1280,9 +1280,9 @@ This method sends a `CreateUsers` command. The 1st argument `params` must be a h
 Property |             | Type    | Required |Description
 :--------|:------------|:--------|:---------|:----------
 `User`   |             | Array   | required | a list of users
-         | `Username`  | String  | required | Username
-         | `Password`  | String  | required | Password
-         | `UserLevel` | String  | required | Either "Administrator", "Operator", "User", or "Anonymous"
++-       | `Username`  | String  | required | Username
++-       | `Password`  | String  | required | Password
++-       | `UserLevel` | String  | required | Either "Administrator", "Operator", "User", or "Anonymous"
 
 ```JavaScript
 let params = {
@@ -1307,7 +1307,7 @@ This method sends a `DeleteUsers` command. The 1st argument `params` must be a h
 Property |             | Type    | Required |Description
 :--------|:------------|:--------|:---------|:----------
 `User`   |             | Array   | required | a list of users
-         | `Username`  | String  | required | Username
++-       | `Username`  | String  | required | Username
 
 ```JavaScript
 let params = {
