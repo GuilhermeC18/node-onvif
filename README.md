@@ -1176,9 +1176,9 @@ Property       |               | Type    | Required |Description
 `FromDHCP`     |               | boolean | required | true or false
 `SearchDomain` |               | Array   | optional | a list of search domains
 `DNSManual`    |               | Array   | optional | a list of DNS addresses
-               | `Type`        | String  | required | "IPv4" or "IPv6"
-               | `IPv4Address` | String  | optional | IPv4 address
-               | `IPv6Address` | String  | optional | IPv6 address
++-             | `Type`        | String  | required | "IPv4" or "IPv6"
++-             | `IPv4Address` | String  | optional | IPv4 address
++-             | `IPv6Address` | String  | optional | IPv6 address
 
 ```JavaScript
 let params = {
@@ -1212,9 +1212,9 @@ This method sends a `SetNetworkProtocols` command. The 1st argument `params` mus
 Property           |           | Type    | Required |Description
 :------------------|:----------|:--------|:---------|:----------
 `NetworkProtocols` |           | Array   | required |
-                   | `Name`    | String  | required |
-                   | `Enabled` | Boolean | optional |
-                   | `Port`    | Integer | optional |
++-                 | `Name`    | String  | required |
++-                 | `Enabled` | Boolean | optional |
++-                 | `Port`    | Integer | optional |
 
 ```JavaScript
 let params = {
