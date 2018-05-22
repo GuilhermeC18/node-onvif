@@ -1332,9 +1332,9 @@ This method sends a `SetUser` command. The 1st argument `params` must be a hash 
 Property |             | Type    | Required |Description
 :--------|:------------|:--------|:---------|:----------
 `User`   |             | Array   | required | a list of users
-         | `Username`  | String  | required | Username
-         | `Password`  | String  | required | Password
-         | `UserLevel` | String  | required | Either "Administrator", "Operator", "User", or "Anonymous"
++-       | `Username`  | String  | required | Username
++-       | `Password`  | String  | required | Password
++-       | `UserLevel` | String  | required | Either "Administrator", "Operator", "User", or "Anonymous"
 
 ```JavaScript
 let params = {
@@ -1368,9 +1368,9 @@ Property    |               | Type    | Required |Description
 :-----------|:--------------|:--------|:---------|:----------
 `FromDHCP`  |               | Boolean | required | true or false
 `NTPManual` |               | Object  | optional |
-            | `Type`        | String  | required | "IPv4" or "IPv6"
-            | `IPv4Address` | String  | optional | IPv4 address
-            | `IPv6Address` | String  | optional | IPv6 address
++-          | `Type`        | String  | required | "IPv4" or "IPv6"
++-          | `IPv4Address` | String  | optional | IPv4 address
++-          | `IPv6Address` | String  | optional | IPv6 address
 
 ```JavaScript
 let params = {
