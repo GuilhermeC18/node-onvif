@@ -598,9 +598,9 @@ The `OnvifDevice` object provides some properties as follows:
 Property   |          | Type   | Description
 :----------|:---------|:-------|:-----------
 `services` |          | Object |
-           | `device` | Object | [`OnvifServiceDevice`](#OnvifServiceDevice-object) object
-           | `media`  | Object | [`OnvifServiceMedia`](#OnvifServiceMedia-object) object
-           | `ptz`    | Object | [`OnvifServicePtz`](#OnvifServicePtz-object) object
++-         | `device` | Object | [`OnvifServiceDevice`](#OnvifServiceDevice-object) object
++-         | `media`  | Object | [`OnvifServiceMedia`](#OnvifServiceMedia-object) object
++-         | `ptz`    | Object | [`OnvifServicePtz`](#OnvifServicePtz-object) object
 
 These objects will be set when the initialization process is completed calling the [`init()`](#OnvifDevice-init-method) method. See the section "[ONVIF commands](#ONVIF-commands)" for details.
 
