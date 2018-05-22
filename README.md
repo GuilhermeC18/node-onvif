@@ -866,9 +866,9 @@ This method takes a hash object as the 1st argument. The structure of the hash o
 Property  |     | Type    | Required |Description
 :---------|:----|:--------|:---------|:----------
 `speed`   |     | Object  | required |
-          | `x` | Float   | required | Speed of pan in the range of -1.0 to 1.0.
-          | `y` | Float   | required | Speed of tilt in the range of -1.0 to 1.0.
-          | `z` | Float   | required | Speed of zoom in the range of -1.0 to 1.0.
++-        | `x` | Float   | required | Speed of pan in the range of -1.0 to 1.0.
++-        | `y` | Float   | required | Speed of tilt in the range of -1.0 to 1.0.
++-        | `z` | Float   | required | Speed of zoom in the range of -1.0 to 1.0.
 `timeout` |     | Integer | optional | Timeout in seconds (Default: 1)
 
 The `speed.x` represents the speed of horizontal movement of the camera. If the value of the `speed.x` is positive, the camera will turn to the right. If the value is negative, the camera will turn to the left. If the value is zero, the camera won't move in a horizontal direction.
