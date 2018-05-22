@@ -2015,13 +2015,13 @@ Property       |     | Type     | Required |Description
 :--------------|:----|:---------|:---------|:----------
 `ProfileToken` |     | String   | required | a token of the profile
 `Position`     |     | Object   | required |
-               | `x` | Float    | required | Position of pan (The range depends on the profile)
-               | `y` | Float    | required | Position of tilt (The range depends on the profile)
-               | `z` | Float    | required | Position of zoom (The range depends on the profile)
++-             | `x` | Float    | required | Position of pan (The range depends on the profile)
++-             | `y` | Float    | required | Position of tilt (The range depends on the profile)
++-             | `z` | Float    | required | Position of zoom (The range depends on the profile)
 `Speed`        |     | Object   | required |
-               | `x` | Float    | required | Speed of pan (in the range of -1.0 to 1.0)
-               | `y` | Float    | required | Speed of tilt (in the range of -1.0 to 1.0)
-               | `z` | Float    | required | Speed of zoom (in the range of -1.0 to 1.0)
++-             | `x` | Float    | required | Speed of pan (in the range of -1.0 to 1.0)
++-             | `y` | Float    | required | Speed of tilt (in the range of -1.0 to 1.0)
++-             | `z` | Float    | required | Speed of zoom (in the range of -1.0 to 1.0)
 
 ```JavaScript
 let params = {
