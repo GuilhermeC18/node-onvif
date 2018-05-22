@@ -2185,9 +2185,9 @@ Property       |     | Type     | Required |Description
 `ProfileToken` |     | String   | required | a token of the profile
 `PresetToken`  |     | String   | required | a token of the preset
 `Speed`        |     | Object   | required |
-               | `x` | Float    | required | Speed of pan (in the range of 0.0 to 1.0)
-               | `y` | Float    | required | Speed of tilt (in the range of 0.0 to 1.0)
-               | `z` | Float    | required | Speed of zoom (in the range of 0.0 to 1.0)
++-             | `x` | Float    | required | Speed of pan (in the range of 0.0 to 1.0)
++-             | `y` | Float    | required | Speed of tilt (in the range of 0.0 to 1.0)
++-             | `z` | Float    | required | Speed of zoom (in the range of 0.0 to 1.0)
 
 ```JavaScript
 let params = {
