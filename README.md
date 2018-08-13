@@ -2242,6 +2242,8 @@ This module is based on the [ONVIF specifications](http://www.onvif.org/Document
 ---------------------------------------
 ## <a id="Release-Note">Release Note</a>
 
+* v0.1.5 (2018-08-)13
+  * Added NAT support. ([Pull Request #34](https://github.com/futomi/node-onvif/pull/34))
 * v0.1.4 (2018-03-25)
   * Clarified the instruction of the installation in the README.md and Added the `engines` section to the package.json. ([Pull Request #24](https://github.com/futomi/node-onvif/pull/24))
   * Fixed the bug of the loop of `SearchDomain`. ([Pull Request #23](https://github.com/futomi/node-onvif/pull/23))
