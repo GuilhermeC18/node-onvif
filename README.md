@@ -2242,6 +2242,8 @@ This module is based on the [ONVIF specifications](http://www.onvif.org/Document
 ---------------------------------------
 ## <a id="Release-Note">Release Note</a>
 
+* v0.1.7 (2018-08-14)
+  * Newly added the `lastResponse` property to the [`OnvifDevice`](#onvifdevice-object) object for debug. This property is used to investigate SOAP parse error.
 * v0.1.6 (2018-08-13)
   * Fixed the bug of SOAP name space handling. ([Issue #38](https://github.com/futomi/node-onvif/issues/38))
 * v0.1.5 (2018-08-13)
