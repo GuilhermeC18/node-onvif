@@ -54,6 +54,8 @@ This package includes a sample application "[ONVIF Network Camera Manager](https
     * [`getCurrentProfile()` method](#OnvifDevice-getCurrentProfile-method)
     * [`getProfileList()` method](#OnvifDevice-getProfileList-method)
     * [`changeProfile(index|token)` method](#OnvifDevice-changeProfile-method)
+    * [`addVideoSourceConfiguration(index|token)` method](#OnvifDevice-addVideoSource-method)
+    * [`addVideoEncoderConfiguration(index|token)` method](#OnvifDevice-addVideoEncoder-method)
     * [`getUdpStreamUrl()` method](#OnvifDevice-getUdpStreamUrl-method)
     * [`fetchSnapshot(callback)` method](#OnvifDevice-fetchSnapshot-method)
     * [`ptzMove(params[, callback])` method](#OnvifDevice-ptzMove-method)
@@ -815,7 +817,13 @@ This sample code will output the result like this:
 - Before: 1280 x 720
 - After: 320 x 180
 ```
+#### <a id="OnvifDevice-addVideoSource-method">addVideoSourceConfiguration(*index|token*)</a>
 
+TBD
+
+#### <a id="OnvifDevice-addVideoEncoder-method">addVideoEncoderConfiguration(*index|token*)</a>
+
+TBD
 #### <a id="OnvifDevice-getUdpStreamUrl-method">getUdpStreamUrl()</a>
 
 This method returns the UDP Stream URL. Though the URL can be obtained from the result of the [`getCurrentProfile()`](#OnvifDevice-getCurrentProfile-method) method as well, this method makes that easy.
