@@ -14,6 +14,8 @@ The node-onvif provides you with the APIs as follows:
   * Device Management Service
   * Media Service
   * PTZ Service
+  * Search Service
+  * Replay Service
 
 Besides, the node-onvif provides you with simple APIs that allow you to control ONVIF network cameras easily even if you are not familiar with the ONVIF specifications.
 
@@ -137,6 +139,12 @@ This package includes a sample application "[ONVIF Network Camera Manager](https
   * [`getPresets(params[, callback])` method](#OnvifServicePtz-getPresets-method)
   * [`gotoPreset(params[, callback])` method](#OnvifServicePtz-gotoPreset-method)
   * [`removePreset(params[, callback])` method](#OnvifServicePtz-removePreset-method)
+* [`OnvifServiceSearch` object](#OnvifServiceSearch-object)
+  * [`getRecordingSummary([callback])` method](#OnvifServiceSearch-getRecordingSummary-method)
+  * [`findRecordings(params[, callback])` method](#OnvifServiceSearch-findRecordings-method)
+  * [`getRecordingSearchResults(params[, callback])` method](#OnvifServiceSearch-getRecordingSearchResults-method)
+* [`OnvifServiceReplay` object](#OnvifServiceReplay-object)
+  * [`getReplayUri(params[, callback])` method](#OnvifServiceReplay-getReplayUri-method)
 * [References](#References)
 * [Release Note](#Release-Note)
 * [License](#License)
@@ -601,6 +609,8 @@ Property   |          | Type   | Description
 +-         | `device` | Object | [`OnvifServiceDevice`](#OnvifServiceDevice-object) object
 +-         | `media`  | Object | [`OnvifServiceMedia`](#OnvifServiceMedia-object) object
 +-         | `ptz`    | Object | [`OnvifServicePtz`](#OnvifServicePtz-object) object
++-         | `search` | Object | [`OnvifServiceSearch`](#OnvifServiceSearch-object) object
++-         | `replay` | Object | [`OnvifServiceReplay`](#OnvifServiceReplay-object) object
 
 These objects will be set when the initialization process is completed calling the [`init()`](#OnvifDevice-init-method) method. See the section "[ONVIF commands](#ONVIF-commands)" for details.
 
@@ -2226,6 +2236,119 @@ device.services.ptz.removePreset(params).then((result) => {
 ```
 
 ---------------------------------------
+## <a id="OnvifServiceSearch-object">`OnvifServiceSearch` object</a>
+
+This object represents the [ONVIF Search Service](https://www.onvif.org/specs/srv/rsrch/ONVIF-RecordingSearch-Service-Spec.pdf).
+
+### <a id="OnvifServiceSearch-getRecordingSummary-method">getRecordingSummary(*[callback]*) method</a>
+
+This method sends a `GetRecordingSummary` command.
+
+### <a id="OnvifServiceSearch-findRecordings-method">findRecordings(*params[, callback]*) method</a>
+
+This method sends a `FindRecordings` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
+
+Property        |                              |         | Type    | Required |Description
+:---------------|:-----------------------------|:--------|:--------|:---------|:----------
+`Scope`         |                              |         |Object   | required | scope defines the dataset to consider for this search
++-              | `IncludedSources`            |         | Array   | optional | a list of sources that are included in the scope
++-              | +-                           | `Type`  | String  | optional |
++-              | +-                           | `Token` | String  | required |
++-              | `IncludedRecordings`         |         | Array   | optional | a list of recordings that are included in the scope
++-              | `RecordingInformationFilter` |         | String  | optional | an xpath expression used to specify what recordings to search
++-              | `Extension`                  |         | String  | optional | extension point
+`MaxMatches`    |                              |         | Integer | optional | the search will be completed after this many matches
+`KeepAliveTime` |                              |         | Integer | required | the time the search session will be kept alive after responding to this and subsequent requests
+
+```JavaScript
+let params = {
+    'Scope': {
+        'IncludedSources': [
+            {
+                'Type': 'sourceType',
+                'Token': 'sourceToken'
+            }
+        ],
+        'IncludedRecordings': [
+            'recording1'
+        ],
+        'RecordingInformationFilter': 'filter',
+        'Extension': 'extension',
+    },
+    'MaxMatches': 3,
+    'KeepAliveTime': 100
+};
+
+device.services.ptz.findRecordings(params).then((result) => {
+  console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
+});
+```
+
+### <a id="OnvifServiceSearch-getRecordingSearchResults-method">getRecordingSearchResults(*params[, callback]*) method</a>
+
+This method sends a `GetRecordingSearchResults` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
+
+Property         | Type    | Required |Description
+:----------------|:--------|:---------|:----------
+`SearchToken`    | String  | required | the search session to get results from
+`MinResults`     | Integer | optional | the minimum number of results to return in one response
+`MaxResults`     | Integer | optional | the maximum number of results to return in one response
+`WaitTime`       | Integer | optional | the maximum time before responding to the request
+
+```JavaScript
+let params = {
+    'SearchToken': 'token',
+    'MinResults': 3,
+    'MaxResults': 14,
+    'WaitTime': 50
+};
+
+device.services.ptz.findRecordings(params).then((result) => {
+  console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
+});
+```
+
+---------------------------------------
+## <a id="OnvifServiceReplay-object">`OnvifServiceReplay` object</a>
+
+This object represents the [ONVIF Replay Service](https://www.onvif.org/specs/srv/replay/ONVIF-ReplayControl-Service-Spec.pdf).
+
+### <a id="OnvifServiceReplay-getReplayUri-method">getReplayUri(*params[, callback]*) method</a>
+
+This method sends a `GetReplayUri` command. The 1st argument `params` must be a hash object consisting of the properties as follows:
+
+Property         |             |            | Type   | Required |Description
+:----------------|:------------|:-----------|:-------|:---------|:----------
+`StreamSetup`    |             |            | Object | required | the connection parameters to be used for the stream
++-               | `Stream`    |            | String | required | either RTP-Unicast, RTP-Multicast
++-               | `Transport` |            | Object | required |
++-               | +-          | `Protocol` | String | required | either UDP, TCP, RTSP, HTTP
++-               | +-          | `Tunnel`   | Object | optional | **`TODO`** not implemented
+`RecordingToken` |             |            | String | required | identifier of the recording to be streamed
+
+```JavaScript
+let params = {
+    'StreamSetup': {
+        'Stream': 'RTP-Unicast',
+        'Transport': {
+            'Protocol': 'TCP'
+        },
+    },
+    'RecordingToken': 'token'
+};
+
+device.services.ptz.findRecordings(params).then((result) => {
+  console.log(JSON.stringify(result['data'], null, '  '));
+}).catch((error) => {
+  console.error(error);
+});
+```
+
+---------------------------------------
 ## <a id="References"> References</a>
 
 This module is based on the [ONVIF specifications](http://www.onvif.org/Documents/Specifications.aspx):
@@ -2233,10 +2356,14 @@ This module is based on the [ONVIF specifications](http://www.onvif.org/Document
 * [ONVIF Core Specification ver 16.06](http://www.onvif.org/specs/core/ONVIF-Core-Specification-v1606.pdf)
 * [ONVIF Media Service Specification ver 16.06](http://www.onvif.org/specs/srv/media/ONVIF-Media-Service-Spec-v1606.pdf)
 * [ONVIF PTZ Service Specification ver 2.6.1](http://www.onvif.org/specs/srv/ptz/ONVIF-PTZ-Service-Spec-v261.pdf)
+* [ONVIF Search Service Specification ver 18.12](https://www.onvif.org/specs/srv/rsrch/ONVIF-RecordingSearch-Service-Spec-v1812.pdf)
+* [ONVIF Replay Service Specification ver 17.06](https://www.onvif.org/specs/srv/replay/ONVIF-ReplayControl-Service-Spec-v1706.pdf)
 * [ONVIF Profile S Specification ver  1.1.1](http://www.onvif.org/Portals/0/documents/op/ONVIF_Profile_%20S_Specification_v1-1-1.pdf)
 * [ONVIF Device Management Service WSDL, ver 16.06](http://www.onvif.org/onvif/ver10/device/wsdl/devicemgmt.wsdl)
 * [ONVIF Media Service WSDL, ver 2.6](http://www.onvif.org/onvif/ver10/media/wsdl/media.wsdl)
 * [ONVIF PTZ Service WSDL, ver 16.06](http://www.onvif.org/onvif/ver20/ptz/wsdl/ptz.wsdl)
+* [ONVIF Search Service WSDL, ver 2.4.2](https://www.onvif.org/ver10/search.wsdl)
+* [ONVIF Replay Service WSDL, ver 18.06](https://www.onvif.org/ver10/replay.wsdl)
 * [ONVIF Application Programmer's Guide ver 1.0](http://www.onvif.org/Portals/0/documents/WhitePapers/ONVIF_WG-APG-Application_Programmer%27s_Guide.pdf)
 
 ---------------------------------------
