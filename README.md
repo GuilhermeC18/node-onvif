@@ -140,10 +140,12 @@ This package includes a sample application "[ONVIF Network Camera Manager](https
   * [`gotoPreset(params[, callback])` method](#OnvifServicePtz-gotoPreset-method)
   * [`removePreset(params[, callback])` method](#OnvifServicePtz-removePreset-method)
 * [`OnvifServiceSearch` object](#OnvifServiceSearch-object)
+  * [`getServiceCapabilities([callback])` method](#OnvifServiceSearch-getServiceCapabilities-method)
   * [`getRecordingSummary([callback])` method](#OnvifServiceSearch-getRecordingSummary-method)
   * [`findRecordings(params[, callback])` method](#OnvifServiceSearch-findRecordings-method)
   * [`getRecordingSearchResults(params[, callback])` method](#OnvifServiceSearch-getRecordingSearchResults-method)
 * [`OnvifServiceReplay` object](#OnvifServiceReplay-object)
+  * [`getServiceCapabilities([callback])` method](#OnvifServiceReplay-getServiceCapabilities-method)
   * [`getReplayUri(params[, callback])` method](#OnvifServiceReplay-getReplayUri-method)
 * [References](#References)
 * [Release Note](#Release-Note)
@@ -2240,6 +2242,10 @@ device.services.ptz.removePreset(params).then((result) => {
 
 This object represents the [ONVIF Search Service](https://www.onvif.org/specs/srv/rsrch/ONVIF-RecordingSearch-Service-Spec.pdf).
 
+### <a id="OnvifServiceSearch-getServiceCapabilities-method">getServiceCapabilities(*[callback]*) method</a>
+
+This method sends a `GetServiceCapabilities` command.
+
 ### <a id="OnvifServiceSearch-getRecordingSummary-method">getRecordingSummary(*[callback]*) method</a>
 
 This method sends a `GetRecordingSummary` command.
@@ -2316,6 +2322,10 @@ device.services.ptz.findRecordings(params).then((result) => {
 ## <a id="OnvifServiceReplay-object">`OnvifServiceReplay` object</a>
 
 This object represents the [ONVIF Replay Service](https://www.onvif.org/specs/srv/replay/ONVIF-ReplayControl-Service-Spec.pdf).
+
+### <a id="OnvifServiceReplay-getServiceCapabilities-method">getServiceCapabilities(*[callback]*) method</a>
+
+This method sends a `GetServiceCapabilities` command.
 
 ### <a id="OnvifServiceReplay-getReplayUri-method">getReplayUri(*params[, callback]*) method</a>
 
