@@ -134,8 +134,8 @@ let pass = "admin1234" //"admin123" //
 // ptz({ xaddr, user, pass }, { x: 1.0 })
 
 // GetDeviceInfo({ xaddr, user, pass })
-// getOSDs({ xaddr, user, pass })
-getSnapshotUri({ xaddr, user, pass })
+getOSDs({ xaddr, user, pass })
+// getSnapshotUri({ xaddr, user, pass })
 // getOSD({ xaddr, user, pass }, "OsdToken_102")
 // getOSDOptions({ xaddr, user, pass })
 // setOSD(
