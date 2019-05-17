@@ -70,25 +70,22 @@ const setOSD = (option, params) => {
 }
 // create OSD
 const createOSD = option => {
-	fs.readFile("./osd.xml", (err, data) => {
-		var osdString = data.toString()
-		let device = new onvif.OnvifDevice({ ...option })
-		device
-			.init()
-			.then(info => {
-				let params = {
-					VideoSourceConfigurationToken: device.current_profile.video.source.token
-				}
-				device.services.media
-					.createOSD(params)
-					.then(res => {
-						console.log(JSON.stringify(res["data"], null, 2))
-					})
-					.catch(err => console.log(err))
+let device = new onvif.OnvifDevice({ ...option })
+	device
+	.init()
+	.then(info => {
+		let params = {
+			VideoSourceConfigurationToken: device.current_profile.video.source.token
+		}
+		device.services.media
+			.createOSD(params)
+			.then(res => {
+				console.log(JSON.stringify(res["data"], null, 2))
 			})
-			.catch(error => {
-				console.error(error)
-			})
+			.catch(err => console.log(err))
+	})
+	.catch(error => {
+	  console.error(error)
 	})
 }
 // delete OSD
