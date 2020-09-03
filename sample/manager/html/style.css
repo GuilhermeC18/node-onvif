@@ -130,3 +130,23 @@ h1 {
 #connected-device div.ptz-zom-ctl-box:hover {
 	opacity: 0.6;
 }
+
+#connected-device div.focus-ctl-box {
+	position: absolute;
+	bottom: 180px;
+	right: 1em;
+	opacity: 0.4;
+}
+#connected-device div.focus-ctl-box:hover {
+	opacity: 0.6;
+}
+
+#connected-device div.autofocus-ctl-box {
+	position: absolute;
+	bottom: 240px;
+	right: 1em;
+	opacity: 0.4;
+}
+#connected-device div.autofocus-ctl-box:hover {
+	opacity: 0.6;
+}

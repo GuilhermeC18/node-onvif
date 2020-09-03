@@ -24,6 +24,10 @@ function OnvifManager() {
 		'ptz_pad' : $('#connected-device div.ptz-pad-box'),
 		'zom_in'  : $('#connected-device div.ptz-zom-ctl-box button.ptz-zom-in'),
 		'zom_out' : $('#connected-device div.ptz-zom-ctl-box button.ptz-zom-ot'),
+		'foc_in'  : $('#connected-device div.focus-ctl-box button.focus-in'),
+		'foc_out' : $('#connected-device div.focus-ctl-box button.focus-ot'),
+		'foc_on'  : $('#connected-device div.autofocus-ctl-box button.autofocus-on'),
+		'foc_off' : $('#connected-device div.autofocus-ctl-box button.autofocus-off'),
 	};
 	this.selected_address = '';
 	this.device_connected = false;
@@ -54,6 +58,21 @@ OnvifManager.prototype.init = function() {
 	this.el['zom_out'].on('mouseup', this.ptzStop.bind(this));
 	this.el['zom_out'].on('touchstart', this.ptzMove.bind(this));
 	this.el['zom_out'].on('touchend', this.ptzStop.bind(this));
+
+	this.el['foc_in'].on('mousedown', this.focusMove.bind(this));
+	this.el['foc_in'].on('mouseup', this.focusStop.bind(this));
+	this.el['foc_in'].on('touchstart', this.focusMove.bind(this));
+	this.el['foc_in'].on('touchend', this.focusStop.bind(this));
+
+	this.el['foc_out'].on('mousedown', this.focusMove.bind(this));
+	this.el['foc_out'].on('mouseup', this.focusStop.bind(this));
+	this.el['foc_out'].on('touchstart', this.focusMove.bind(this));
+	this.el['foc_out'].on('touchend', this.focusStop.bind(this));
+
+	this.el['foc_on'].on('click', this.enableAutofocus.bind(this));
+	this.el['foc_on'].on('touchend', this.enableAutofocus.bind(this));
+	this.el['foc_off'].on('click', this.disableAutofocus.bind(this));
+	this.el['foc_off'].on('touchend', this.disableAutofocus.bind(this));
 };
 
 OnvifManager.prototype.adjustSize = function() {
@@ -336,6 +355,68 @@ OnvifManager.prototype.ptzStop = function(event) {
 	this.sendRequest('ptzStop', {
 		'address': this.selected_address
 	});
+	this.ptz_moving = false;
+};
+
+OnvifManager.prototype.disableAutofocus = function(event) {
+	event.preventDefault();
+	event.stopPropagation();
+	if(this.device_connected === false) {
+		return;
+	}
+	this.sendRequest('setAutofocus', {
+		'address': this.selected_address,
+		'enabled': false
+	});
+};
+
+OnvifManager.prototype.enableAutofocus = function(event) {
+	event.preventDefault();
+	event.stopPropagation();
+	if(this.device_connected === false) {
+		return;
+	}
+	this.sendRequest('setAutofocus', {
+		'address': this.selected_address,
+		'enabled': true
+	});
+};
+
+OnvifManager.prototype.focusMove = function(event) {
+	if(this.device_connected === false) {
+		return;
+	}
+	var speed = 0.0;
+
+	if(event.type.match(/^(mousedown|touchstart)$/)) {
+		if(event.currentTarget.classList.contains('focus-ot')) {
+			speed = -1;
+		} else if(event.currentTarget.classList.contains('focus-in')) {
+			speed = 1;
+		} else {
+			return;
+		}
+	} else {
+		return;
+	}
+
+	this.sendRequest('focusMove', {
+		'address': this.selected_address,
+		'speed'  : speed
+	});
+	event.preventDefault();
+	event.stopPropagation();
+};
+
+OnvifManager.prototype.focusStop = function(event) {
+	if(!this.selected_address) {
+		return;
+	}
+
+	this.sendRequest('focusStop', {
+		'address': this.selected_address
+	})
+
 	this.ptz_moving = false;
 };
 

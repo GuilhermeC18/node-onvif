@@ -106,6 +106,12 @@ function wsServerRequest(request) {
 			ptzStop(conn, params);
 		} else if(method === 'ptzHome') {
 			ptzHome(conn, params);
+		} else if(method === 'focusMove') {
+			focusMove(conn, params);
+		} else if(method === 'focusStop') {
+			focusStop(conn, params);
+		} else if(method === 'setAutofocus') {
+			setAutofocus(conn, params);
 		}
 	});
 
@@ -275,4 +281,108 @@ function ptzHome(conn, params) {
 		}
 		conn.send(JSON.stringify(res));
 	});
+}
+
+function setAutofocus(conn, params) {
+	var device = devices[params.address];
+	if(!device) {
+		var res = {'id': 'setAutofocus', 'error': 'The specified device is not found: ' + params.address};
+		conn.send(JSON.stringify(res));
+		return;
+	}
+	if(!device.services.imaging) {
+		var res = {'id': 'setAutofocus', 'error': 'The specified device does not support imaging.'};
+		conn.send(JSON.stringify(res));
+		return;
+	}
+	var profile = device.getCurrentProfile();
+	var mediaParams = {'ProfileToken': profile['token']}
+	var mode = params.enabled ? 'AUTO' : 'MANUAL'
+
+	device.services.media.getVideoSourceConfigurationOptions(mediaParams, (error, result) => {
+		var res = {'id': 'setAutofocus'};
+		if(error) {
+			res['error'] = error.toString();
+			conn.send(JSON.stringify(res));
+		} else {
+			var token = result['data']['GetVideoSourceConfigurationOptionsResponse']['Options']['VideoSourceTokensAvailable']
+			device.services.imaging.setImagingSettings({'VideoSourceToken': token, 'Focus': {'AutoFocusMode': mode}}, (error, result) => {
+				if(error) {
+					res['error'] = error.toString();
+				} else {
+					res['result'] = true;
+				}
+				conn.send(JSON.stringify(res));
+			})
+		}
+	})
+}
+
+function focusMove(conn, params) {
+	var device = devices[params.address];
+	if(!device) {
+		var res = {'id': 'focusStop', 'error': 'The specified device is not found: ' + params.address};
+		conn.send(JSON.stringify(res));
+		return;
+	}
+	if(!device.services.imaging) {
+		var res = {'id': 'setAutofocus', 'error': 'The specified device does not support imaging.'};
+		conn.send(JSON.stringify(res));
+		return;
+	}
+	var profile = device.getCurrentProfile();
+	var mediaParams = {'ProfileToken': profile['token']}
+	var speed = params.speed;
+
+	device.services.media.getVideoSourceConfigurationOptions(mediaParams, (error, result) => {
+		var res = {'id': 'setAutofocus'};
+		if(error) {
+			res['error'] = error.toString();
+			conn.send(JSON.stringify(res));
+		} else {
+			var token = result['data']['GetVideoSourceConfigurationOptionsResponse']['Options']['VideoSourceTokensAvailable']
+			device.services.imaging.continuousMove({'VideoSourceToken': token, 'Speed': speed}, (error, result) => {
+				if(error) {
+					res['error'] = error.toString();
+				} else {
+					res['result'] = true;
+				}
+				conn.send(JSON.stringify(res));
+			})
+		}
+	})
+}
+
+function focusStop(conn, params) {
+	var device = devices[params.address];
+	if(!device) {
+		var res = {'id': 'focusStop', 'error': 'The specified device is not found: ' + params.address};
+		conn.send(JSON.stringify(res));
+		return;
+	}
+	if(!device.services.imaging) {
+		var res = {'id': 'setAutofocus', 'error': 'The specified device does not support imaging.'};
+		conn.send(JSON.stringify(res));
+		return;
+	}
+	var profile = device.getCurrentProfile();
+	var mediaParams = {'ProfileToken': profile['token']}
+
+	device.services.media.getVideoSourceConfigurationOptions(mediaParams, (error, result) => {
+		var res = {'id': 'setAutofocus'};
+		if(error) {
+			res['error'] = error.toString();
+			conn.send(JSON.stringify(res));
+		} else {
+			var token = result['data']['GetVideoSourceConfigurationOptionsResponse']['Options']['VideoSourceTokensAvailable']
+			device.services.imaging.continuousMove({'VideoSourceToken': token, 'Speed': 0}, (error, result) => {
+				if(error) {
+					res['error'] = error.toString();
+				} else {
+					res['result'] = true;
+				}
+				conn.send(JSON.stringify(res));
+			})
+		}
+	})
 }
