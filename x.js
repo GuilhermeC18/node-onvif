@@ -4,7 +4,7 @@ const onvif = require('node-onvif');
 let device = new onvif.OnvifDevice({
   xaddr: 'http://10.10.10.3/onvif/device_service',
   user : 'admin',
-  pass : 'blackoffice2MX',
+  pass : 'senha',
 });
 
 // Initialize the OnvifDevice object
