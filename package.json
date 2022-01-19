@@ -3,7 +3,7 @@
   "version": "0.1.7",
   "description": "The node-onvif is a Node.js module which allows you to communicate with the network camera which supports the ONVIF specifications.",
   "engines": {
-    "node" : ">=4.4"
+    "node": ">=4.4"
   },
   "main": "./lib/node-onvif.js",
   "files": [
@@ -33,7 +33,7 @@
   },
   "readmeFilename": "README.md",
   "dependencies": {
-    "xml2js": ">=0.4.17",
-    "html": ">=1.0.0"
+    "html": ">=1.0.0",
+    "xml2js": "^0.4.23"
   }
 }
