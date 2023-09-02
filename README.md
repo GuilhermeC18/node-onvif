@@ -54,6 +54,8 @@ This package includes a sample application "[ONVIF Network Camera Manager](https
     * [`getCurrentProfile()` method](#OnvifDevice-getCurrentProfile-method)
     * [`getProfileList()` method](#OnvifDevice-getProfileList-method)
     * [`changeProfile(index|token)` method](#OnvifDevice-changeProfile-method)
+    * [`addVideoSourceConfiguration(index|token)` method](#OnvifDevice-addVideoSource-method)
+    * [`addVideoEncoderConfiguration(index|token)` method](#OnvifDevice-addVideoEncoder-method)
     * [`getUdpStreamUrl()` method](#OnvifDevice-getUdpStreamUrl-method)
     * [`fetchSnapshot(callback)` method](#OnvifDevice-fetchSnapshot-method)
     * [`ptzMove(params[, callback])` method](#OnvifDevice-ptzMove-method)
@@ -63,6 +65,7 @@ This package includes a sample application "[ONVIF Network Camera Manager](https
   * [`getCapabilities([callback])` method](#OnvifServiceDevice-getCapabilities-method)
   * [`getWsdlUrl([callback])` method](#OnvifServiceDevice-getWsdlUrl-method)
   * [`getDiscoveryMode([callback])` method](#OnvifServiceDevice-getDiscoveryMode-method)
+  * [`setDiscoveryMode(mode,[callback])` method](#OnvifServiceDevice-setDiscoveryMode-method)
   * [`getScopes([callback])` method](#OnvifServiceDevice-getScopes-method)
   * [`setScopes(params[, callback])` method](#OnvifServiceDevice-setScopes-method)
   * [`addScopes(params[, callback])` method](#OnvifServiceDevice-addScopes-method)
@@ -137,6 +140,7 @@ This package includes a sample application "[ONVIF Network Camera Manager](https
   * [`getPresets(params[, callback])` method](#OnvifServicePtz-getPresets-method)
   * [`gotoPreset(params[, callback])` method](#OnvifServicePtz-gotoPreset-method)
   * [`removePreset(params[, callback])` method](#OnvifServicePtz-removePreset-method)
+* [`OnvifServiceImaging` object](#OnvifServiceImaging-object)
 * [References](#References)
 * [Release Note](#Release-Note)
 * [License](#License)
@@ -600,6 +604,7 @@ Property   |          | Type   | Description
 `services` |          | Object |
 +-         | `device` | Object | [`OnvifServiceDevice`](#OnvifServiceDevice-object) object
 +-         | `media`  | Object | [`OnvifServiceMedia`](#OnvifServiceMedia-object) object
++-         | `imaging`| Object | [`OnvifServiceImaging`](#OnvifServiceImaging-object) object
 +-         | `ptz`    | Object | [`OnvifServicePtz`](#OnvifServicePtz-object) object
 
 These objects will be set when the initialization process is completed calling the [`init()`](#OnvifDevice-init-method) method. See the section "[ONVIF commands](#ONVIF-commands)" for details.
@@ -812,7 +817,13 @@ This sample code will output the result like this:
 - Before: 1280 x 720
 - After: 320 x 180
 ```
+#### <a id="OnvifDevice-addVideoSource-method">addVideoSourceConfiguration(*index|token*)</a>
 
+TBD
+
+#### <a id="OnvifDevice-addVideoEncoder-method">addVideoEncoderConfiguration(*index|token*)</a>
+
+TBD
 #### <a id="OnvifDevice-getUdpStreamUrl-method">getUdpStreamUrl()</a>
 
 This method returns the UDP Stream URL. Though the URL can be obtained from the result of the [`getCurrentProfile()`](#OnvifDevice-getCurrentProfile-method) method as well, this method makes that easy.
@@ -1052,6 +1063,10 @@ This method sends a `GetWsdlUrl` command.
 
 This method sends a `GetDiscoveryMode` command.
 
+### <a id="OnvifServiceDevice-setDiscoveryMode-method">setDiscoveryMode(*[callback]*) method</a>
+
+This method sends a `setDiscoveryMode` command.  The 1st argument `mode` MUST be either 'Discoverable' or 'NonDiscoverable'
+
 ### <a id="OnvifServiceDevice-getScopes-method">getScopes(*[callback]*) method</a>
 
 This method sends a `GetScopes` command.
@@ -1198,6 +1213,10 @@ return device.services.device.setDNS(params).then((result) => {
 ```
 
 ### <a id="OnvifServiceDevice-getNetworkInterfaces-method">getNetworkInterfaces(*[callback]*) method</a>
+
+This method sends a `GetNetworkProtocols` command.
+
+### <a id="OnvifServiceDevice-setNetworkInterfaces-method">setNetworkInterfaces(*params[,callback]*) method</a>
 
 This method sends a `GetNetworkProtocols` command.
 
